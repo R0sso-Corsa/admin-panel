@@ -1,0 +1,20 @@
+[Unit]
+Description=Hermes Homelab Admin Panel
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/vps/admin-panel
+Environment="ADMIN_PASSWORD=4Ygw84XzzhAPhJbFnWU2RAlJ"
+ExecStart=/home/vps/admin-venv/bin/python /home/vps/admin-panel/main.py
+Restart=always
+RestartSec=5
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/vps/admin-panel /tmp
+
+[Install]
+WantedBy=multi-user.target

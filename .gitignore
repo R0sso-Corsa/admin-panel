@@ -1,0 +1,9 @@
+# Sensitive / generated
+.token
+services/*.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
