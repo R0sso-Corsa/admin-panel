@@ -65,8 +65,8 @@
                 },
             }).to(toggle, {
                 '--complete': pressed ? 0 : 100,
-                duration: 0.08,
-                delay: 0.08 
+                duration: 0.24,
+                delay: 0.12 
             });
         };
 
@@ -96,8 +96,8 @@
                 gsap.to(toggle, {
                     '--complete': targetComplete,
                     '--delta': 0,
-                    duration: 0.25,
-                    ease: 'power3.out',
+                    duration: 0.35,
+                    ease: 'power2.out',
                     onComplete: () => {
                         toggle.dataset.active = false;
                         toggle.dataset.pressed = false;
@@ -134,7 +134,7 @@
                     const currentPressed = toggle.matches('[aria-pressed=true]');
                     gsap.to(toggle, { 
                         '--complete': currentPressed ? 100 : 0, 
-                        duration: 0.12 
+                        duration: 0.24 
                     });
                 }
             }
