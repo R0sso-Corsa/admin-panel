@@ -507,7 +507,7 @@
     .indicator--masked {
       background: var(--checked);
       z-index: 12;
-      height: calc(100% - 10px);
+      height: 100%;
       width: 100%;
       translate: -50% -50%;
       container-type: inline-size;
@@ -521,12 +521,12 @@
     .indicator--masked .mask {
       position: absolute;
       height: calc(100% - (2 * var(--border)));
-      width: calc(50% - (2 * var(--border)));
+      width: calc(60% - (2 * var(--border)));
       top: 50%;
       background: #000;
       left: var(--border);
       border-radius: 100px;
-      translate: calc((var(--complete, 0) / 100) * (100cqi - 50cqi - (0 * var(--border)))) -50%;
+      translate: calc((var(--complete, 0) / 100) * (100cqi - 60cqi - (0 * var(--border)))) -50%;
       transition-property: height, width, margin, scale;
       transition-duration: var(--transition);
       transition-timing-function: var(--ease);
@@ -576,13 +576,13 @@
     .indicator__liquid {
       position: absolute;
       height: calc(100% - (2 * var(--border)));
-      width: calc(50% - (2 * var(--border)));
+      width: calc(60% - (2 * var(--border)));
       container-type: inline-size;
       top: 50%;
       background: #0000;
       left: var(--border);
       border-radius: 100px;
-      translate: calc((var(--complete, 0) / 100) * (100cqi - 50% - (2 * var(--border)))) -50%;
+      translate: calc((var(--complete, 0) / 100) * (100cqi - 100% - (2 * var(--border)))) -50%;
       transition-property: scale;
       transition-duration: var(--transition);
       transition-timing-function: var(--ease);
@@ -611,8 +611,8 @@
     .liquid-toggle[data-active='true'] .indicator--masked .mask,
     .liquid-toggle:active .indicator--masked .mask {
       height: calc((100% - (2 * var(--border))) * (1.65 - (var(--delta, 0) * 0.025)));
-      width: calc((50% - (2 * var(--border))) * (1.65 + (var(--delta, 0) * 0.025)));
-      margin-left: calc((50% - (2 * var(--border))) * ((.65 + (var(--delta, 0) * 0.025)) * -0.5));
+      width: calc((60% - (2 * var(--border))) * (1.65 + (var(--delta, 0) * 0.025)));
+      margin-left: calc((60% - (2 * var(--border))) * ((.65 + (var(--delta, 0) * 0.025)) * -0.5));
     }
 
     .liquid-toggle[data-active='true'] .indicator__liquid,
