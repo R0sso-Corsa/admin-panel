@@ -507,7 +507,7 @@
     .indicator--masked {
       background: var(--checked);
       z-index: 12;
-      height: 100%;
+      height: calc(100% - 6px);
       width: 100%;
       translate: -50% -50%;
       container-type: inline-size;
