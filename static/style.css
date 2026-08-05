@@ -507,8 +507,8 @@
     .indicator--masked {
       background: var(--checked);
       z-index: 12;
-      height: 100%;
-      width: 100%;
+      height: calc(100% - 6px);
+      width: calc(100% - 6px);
       translate: -50% -50%;
       container-type: inline-size;
       border: 1px solid rgba(255,255,255,0.18);
@@ -605,6 +605,7 @@
       inset: 0;
       background: white;
       border-radius: 100px;
+      opacity: 0.18;
       transition: opacity var(--transition) var(--ease);
     }
 
@@ -625,7 +626,7 @@
     .liquid-toggle[data-active='true'] .indicator__liquid .shadow,
     .liquid-toggle:active .indicator__liquid .shadow { opacity: 1; }
     .liquid-toggle[data-active='true'] .indicator__liquid .cover,
-    .liquid-toggle:active .indicator__liquid .cover { opacity: 0; }
+    .liquid-toggle:active .indicator__liquid .cover { opacity: 0.18; }
     .liquid-toggle[data-active='true'] .indicator__liquid .liquid__track,
     .liquid-toggle:active .indicator__liquid .liquid__track {
       left: calc(var(--border) * 3);
