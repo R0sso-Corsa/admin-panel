@@ -65,8 +65,8 @@
                 },
             }).to(toggle, {
                 '--complete': pressed ? 0 : 100,
-                duration: 0.24,
-                delay: 0.12 
+                duration: 0.18,
+                delay: 0 
             });
         };
 
