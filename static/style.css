@@ -407,52 +407,16 @@
       filter: brightness(0.97);
       transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .btn-text {
-      position: relative;
-      z-index: 2;
-      pointer-events: none;
-    }
-    .btn-primary .indicator__liquid {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      border-radius: inherit;
-      transform: scale(0.6);
-      opacity: 0;
-      transition: opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1), transform 0.24s cubic-bezier(0.4, 0, 0.2, 1);
-      filter: url(#liquid-glass-admin);
-      will-change: transform, opacity, filter;
-    }
-    .btn-primary:hover .indicator__liquid {
-      opacity: 1;
-      transform: scale(1.25);
-      filter: url(#liquid-glass-admin);
-      transition: opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1) 0.12s, transform 0.24s cubic-bezier(0.4, 0, 0.2, 1) 0.12s;
-    }
-    .btn-primary .indicator__liquid .shadow {
-      opacity: 0;
-      transition: opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .btn-primary:hover .indicator__liquid .shadow {
-      opacity: 1;
-      transition: opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1) 0.12s;
-    }
-    .btn-primary .indicator__liquid .cover {
-      opacity: 1;
-      transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .btn-primary:hover .indicator__liquid .cover {
-      opacity: 0;
-      transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1) 0s;
-    }
-    .btn-primary .indicator__liquid .liquid__track {
+    .btn-primary.btn-liquid:hover {
+      transform: translateY(-1px) scale(1.08);
+      filter: url(#liquid-glass-admin) brightness(1.04);
+      box-shadow: 0 8px 30px rgba(52, 199, 89, 0.45), 0 0 0 1px rgba(52, 199, 89, 0.25);
       transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .btn-primary:hover .indicator__liquid .liquid__track {
-      left: calc(var(--border) * 3);
-      height: calc((var(--height) * 1px) - (6 * var(--border)));
-      transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1) 0.12s;
+    .btn-primary.btn-liquid:active {
+      transform: translateY(0) scale(1.03);
+      filter: url(#liquid-glass-admin) brightness(0.98);
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .btn-danger { background: rgba(255, 69, 58, 0.85); border-color: rgba(255, 69, 58, 0.55); color: #fff; }
     .btn-danger:hover { background: rgba(255, 69, 58, 0.95); }
