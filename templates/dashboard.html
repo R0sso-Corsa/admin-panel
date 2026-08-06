@@ -287,35 +287,47 @@
         <section id="logs" class="settings-section" aria-labelledby="logs-heading">
           <header class="section-header">
             <h1 id="logs-heading" class="section-title">Logs</h1>
-            <p class="section-description">View and filter service logs</p>
+            <p class="section-description">Live container logs in terminal style</p>
           </header>
 
           <div class="content-grid">
             <div class="card-group full-width">
               <div class="log-controls">
                 <label class="field">
-                  <span class="field-label">Service</span>
+                  <span class="field-label">Container</span>
                   <select id="log-service" class="log-filter">
-                    <option value="">All Services</option>
+                    <option value="">Select container…</option>
                     {% for name, service in services.items() %}
-                    <option value="{{ name }}">{{ name }}</option>
+                    <option value="{{ name }}">{{ name }} — {{ service.container }}</option>
                     {% endfor %}
                   </select>
                 </label>
                 <label class="field">
                   <span class="field-label">Lines</span>
                   <select id="log-lines" class="log-filter">
-                    <option value="50">50</option>
-                    <option value="100" selected>100</option>
+                    <option value="100">100</option>
+                    <option value="250">250</option>
                     <option value="500">500</option>
                     <option value="1000">1000</option>
                   </select>
                 </label>
                 <button id="log-refresh" class="btn btn-primary">Refresh</button>
+                <label class="field" style="flex-direction:row;align-items:center;gap:10px">
+                  <input type="checkbox" id="log-tail" checked>
+                  <span class="field-label" style="margin:0">Tail</span>
+                </label>
               </div>
 
-              <div class="log-viewer" id="log-viewer">
-                <div class="log-placeholder">Select a service and click Refresh to view logs</div>
+              <div class="terminal">
+                <div class="terminal-header">
+                  <span class="terminal-dot terminal-dot--red"></span>
+                  <span class="terminal-dot terminal-dot--yellow"></span>
+                  <span class="terminal-dot terminal-dot--green"></span>
+                  <span class="terminal-title" id="terminal-title">Select a container to view logs</span>
+                </div>
+                <div class="terminal-body" id="log-viewer">
+                  <div class="log-placeholder">No logs loaded</div>
+                </div>
               </div>
             </div>
           </div>
@@ -566,37 +578,74 @@
       document.querySelector('.settings-main').scrollTop = 0;
     }
 
-    // Log viewer
+    // Log viewer - terminal style
     const logViewer = document.getElementById('log-viewer');
     const logService = document.getElementById('log-service');
     const logLines = document.getElementById('log-lines');
     const logRefresh = document.getElementById('log-refresh');
+    const logTail = document.getElementById('log-tail');
+    const terminalTitle = document.getElementById('terminal-title');
+
+    let logInterval = null;
+
+    function renderLogLine(line) {
+      const time = line.time ? `<span class="log-time">${escapeHtml(line.time)}</span>` : '';
+      const text = escapeHtml(line.text || '');
+      return `<div class="log-line"><span class="log-text">${time} ${text}</span></div>`;
+    }
+
+    async function loadLogs() {
+      const service = logService.value;
+      const lines = parseInt(logLines.value, 10);
+      const tail = logTail.checked;
+
+      if (!service) {
+        logViewer.innerHTML = '<div class="log-placeholder">Select a container to view logs</div>';
+        if (logInterval) { clearInterval(logInterval); logInterval = null; }
+        return;
+      }
+
+      terminalTitle.textContent = `${service} · ${tail ? 'tail' : 'snapshot'} · ${lines} lines`;
+      logViewer.innerHTML = '<div class="log-placeholder">Loading…</div>';
+
+      try {
+        const url = `/api/logs/${service}?lines=${lines}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.logs?.length) {
+          logViewer.innerHTML = data.logs.map(renderLogLine).join('');
+          logViewer.scrollTop = logViewer.scrollHeight;
+        } else {
+          logViewer.innerHTML = '<div class="log-placeholder">No logs available</div>';
+        }
+      } catch (err) {
+        logViewer.innerHTML = `<div class="log-error">Error: ${escapeHtml(err.message)}</div>`;
+      }
+    }
 
     if (logRefresh) {
-      logRefresh.addEventListener('click', async () => {
-        const service = logService.value;
-        const lines = logLines.value;
-        logViewer.innerHTML = '<div class="log-loading">Loading logs...</div>';
-        
-        try {
-          const url = service 
-            ? `/api/logs/${service}?lines=${lines}`
-            : `/api/logs?lines=${lines}`;
-          const res = await fetch(url);
-          const data = await res.json();
-          
-          if (data.logs) {
-            logViewer.innerHTML = data.logs.map(line => 
-              `<div class="log-line"><span class="log-time">${line.time}</span><span class="log-text">${escapeHtml(line.text)}</span></div>`
-            ).join('');
-          } else {
-            logViewer.innerHTML = '<div class="log-placeholder">No logs available</div>';
-          }
-        } catch (err) {
-          logViewer.innerHTML = `<div class="log-error">Error loading logs: ${err.message}</div>`;
-        }
-      });
+      logRefresh.addEventListener('click', loadLogs);
     }
+
+    logService?.addEventListener('change', () => {
+      if (logInterval) { clearInterval(logInterval); logInterval = null; }
+      loadLogs();
+      if (logTail.checked && logService.value) {
+        logInterval = setInterval(loadLogs, 10000);
+      }
+    });
+
+    logLines?.addEventListener('change', loadLogs);
+
+    logTail?.addEventListener('change', () => {
+      if (logInterval) { clearInterval(logInterval); logInterval = null; }
+      if (logTail.checked && logService.value) {
+        logInterval = setInterval(loadLogs, 10000);
+      } else {
+        loadLogs();
+      }
+    });
 
     function escapeHtml(text) {
       const div = document.createElement('div');

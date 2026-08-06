@@ -1942,6 +1942,86 @@
         .service-row[data-open-service] {
           cursor: pointer;
         }
+
+        /* Terminal-style log viewer */
+        .terminal {
+          border-radius: var(--radius-lg);
+          border: 1px solid var(--border-glass);
+          background: hsl(0 0% 0% / 0.45);
+          box-shadow: var(--shadow-card);
+          overflow: hidden;
+          margin-top: 14px;
+        }
+
+        .terminal-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 14px;
+          background: hsl(0 0% 0% / 0.35);
+          border-bottom: 1px solid var(--border-glass);
+        }
+
+        .terminal-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: hsl(0 0% 70% / 0.6);
+        }
+
+        .terminal-dot--red { background: hsl(0 70% 55% / 0.9); }
+        .terminal-dot--yellow { background: hsl(45 90% 55% / 0.9); }
+        .terminal-dot--green { background: hsl(144 70% 55% / 0.9); }
+
+        .terminal-title {
+          margin-left: 8px;
+          font-size: 12px;
+          color: var(--foreground-muted);
+          letter-spacing: 0.08em;
+        }
+
+        .terminal-body {
+          padding: 14px;
+          max-height: 420px;
+          overflow: auto;
+          background:
+            linear-gradient(hsl(0 0% 0% / 0.25), hsl(0 0% 0% / 0.25)),
+            linear-gradient(0deg, rgba(255,255,255,0.04), rgba(255,255,255,0));
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+          font-size: 12px;
+          line-height: 1.7;
+          color: hsl(144 20% 88%);
+        }
+
+        .log-line {
+          display: flex;
+          gap: 10px;
+          padding: 1px 0;
+          border-bottom: 1px solid hsl(0 0% 100% / 0.03);
+        }
+
+        .log-line:hover {
+          background: hsl(0 0% 100% / 0.04);
+        }
+
+        .log-time {
+          color: hsl(144 20% 60%);
+          white-space: nowrap;
+        }
+
+        .log-text {
+          color: inherit;
+          word-break: break-word;
+        }
+
+        .log-placeholder {
+          color: var(--foreground-muted);
+          font-style: italic;
+        }
+
+        .log-error {
+          color: hsl(0 70% 60%);
+        }
           position: fixed;
           width: 0;
           height: 0;
