@@ -745,7 +745,7 @@
     .card-content {
       position: relative;
       z-index: 3;
-      padding: 56px;
+      padding: 56px 48px;
       padding-bottom: 64px;
     }
 
