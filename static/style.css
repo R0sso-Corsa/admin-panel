@@ -763,155 +763,209 @@
     }
 
     /* Login / auth card styling */
-    .page {
-      position: relative;
-      z-index: 2;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
+        .page {
+          position: relative;
+          z-index: 2;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+        }
 
-    .top-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 24px;
-      z-index: 20;
-      color: rgba(255,255,255,0.85);
-    }
+        .top-bar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 16px 24px;
+          z-index: 20;
+          color: rgba(255,255,255,0.85);
+        }
 
-    .brand {
-      font-weight: 600;
-      letter-spacing: 0.05em;
-    }
+        .brand {
+          font-weight: 600;
+          letter-spacing: 0.05em;
+        }
 
-    .top-nav {
-      display: flex;
-      gap: 16px;
-    }
+        .top-nav {
+          display: flex;
+          gap: 16px;
+        }
 
-    .top-nav a {
-      color: rgba(255,255,255,0.65);
-      text-decoration: none;
-      font-size: 13px;
-    }
+        .top-nav a {
+          color: rgba(255,255,255,0.65);
+          text-decoration: none;
+          font-size: 13px;
+        }
 
-    .top-nav a.active {
-      color: #fff;
-    }
+        .top-nav a.active {
+          color: #fff;
+        }
 
-    .cards-row {
-      width: 100%;
-      max-width: 420px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+        .cards-row {
+          width: 100%;
+          max-width: 420px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
 
-    .glass-card {
-      position: relative;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.15);
-      box-shadow:
-        0 0 0 1px rgba(0,0,0,0.45),
-        inset 0 1px 0 rgba(255,255,255,0.10),
-        inset 0 -1px 0 rgba(0,0,0,0.25);
-      overflow: hidden;
-      width: 100%;
-      height: auto;
-    }
-
-    .glass-surface {
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
-      border-radius: inherit;
-      pointer-events: none;
-    }
-
-    .glass-edge-highlight {
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      background: radial-gradient(
-        circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-        rgba(255,255,255,0.12),
-        rgba(255,255,255,0.00) 55%
-      );
-      opacity: 0;
-      transition: opacity 0.35s ease;
-    }
-
-    .glass-highlight {
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      opacity: 0;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
-      transition: opacity 0.35s ease;
-    }
-
-    .card-content {
-      position: relative;
-      z-index: 3;
-      padding-top: 40px;
-      padding-bottom: 48px;
-      padding-left: 48px;
-      padding-right: 48px;
-    }
-
-    .auth-title {
-      color: #fff;
-      margin: 4px 0 4px;
-      font-size: 26px;
-      letter-spacing: -0.01em;
-    }
-
-    .auth-subtitle {
-      color: rgba(255,255,255,0.65);
-      margin: 0 0 18px;
-      font-size: 14px;
-    }
-
-    .auth-error {
-      color: #ff8a8a;
-      background: rgba(255,80,80,0.08);
-      border: 1px solid rgba(255,120,120,0.25);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin: 0 0 14px;
-      font-size: 13px;
-    }
-
-    .auth-form {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .field-label {
-      color: rgba(255,255,255,0.75);
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
+        .glass-card {
+          position: relative;
+          border-radius: var(--radius);
+          pointer-events: auto;
+          text-decoration: none;
+          color: inherit;
+          transform-style: preserve-3d;
+          transition: transform 0.15s ease-out;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          cursor: default;
+          width: 100%;
+          max-width: 420px;
+        }
+        .glass-surface {
+          position: absolute;
+          inset: 0;
+          border-radius: var(--radius);
+          border: 1px solid var(--border-glass);
+          background: hsl(0 0% 0% / var(--glass-frost));
+          backdrop-filter: var(--filter-id) saturate(var(--glass-saturation));
+          -webkit-backdrop-filter: var(--filter-id) saturate(var(--glass-saturation));
+          z-index: 0;
+          box-shadow:
+            inset 0 0 2px 1px rgba(255,255,255,0.15),
+            inset 0 0 10px 3px rgba(255,255,255,0.08),
+            inset 0 1px 0 rgba(255,255,255,0.12),
+            0 4px 24px rgba(0,0,0,0.45);
+          transition: box-shadow 0.3s ease;
+        }
+        .glass-card:hover .glass-surface {
+          box-shadow:
+            inset 0 0 3px 2px rgba(255,255,255,0.22),
+            inset 0 0 14px 4px rgba(255,255,255,0.10),
+            inset 0 1px 0 rgba(255,255,255,0.18),
+            0 6px 32px rgba(0,0,0,0.55);
+        }
+        .glass-card::before {
+          content: '';
+          position: absolute;
+          inset: -1px;
+          border-radius: var(--radius);
+          background: linear-gradient(
+            135deg,
+            rgba(255,255,255,0.08) 0%,
+            rgba(255,255,255,0.02) 30%,
+            rgba(255,255,255,0) 50%,
+            rgba(255,255,255,0.04) 100%
+          );
+          z-index: 1;
+          pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        .glass-card:hover::before {
+          opacity: 1;
+        }
+        .glass-highlight {
+          position: absolute;
+          inset: 0;
+          border-radius: var(--radius);
+          background: radial-gradient(
+            circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(255,255,255,0.16) 0%,
+            rgba(255,255,255,0.05) 32%,
+            rgba(255,255,255,0) 70%
+          );
+          z-index: 1;
+          pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.25s ease;
+          mix-blend-mode: normal;
+        }
+        .glass-card:hover .glass-highlight {
+          opacity: 1;
+          background: radial-gradient(
+            circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(255,255,255,0.22) 0%,
+            rgba(255,255,255,0.07) 28%,
+            rgba(255,255,255,0) 68%
+          );
+        }
+        .glass-edge-highlight {
+          position: absolute;
+          inset: 0;
+          border-radius: var(--radius);
+          z-index: 1;
+          pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.25s ease;
+          background:
+            linear-gradient(to bottom, rgba(255,255,255, var(--edge-top, 0)) 0%, transparent 25%),
+            linear-gradient(to top, rgba(255,255,255, var(--edge-bottom, 0)) 0%, transparent 25%),
+            linear-gradient(to right, rgba(255,255,255, var(--edge-left, 0)) 0%, transparent 25%),
+            linear-gradient(to left, rgba(255,255,255, var(--edge-right, 0)) 0%, transparent 25%);
+        }
+        .glass-card:hover .glass-edge-highlight {
+          opacity: 1;
+        }
+        .glass-card {
+          --mouse-x: 50%;
+          --mouse-y: 50%;
+        }
+        .card-content {
+          position: relative;
+          z-index: 3;
+          padding: 32px;
+          text-align: center;
+          width: 100%;
+        }
+        .auth-title {
+          color: var(--foreground);
+          margin: 0 0 8px;
+          font-size: 26px;
+          letter-spacing: -0.01em;
+        }
+        .auth-subtitle {
+          color: var(--foreground-muted);
+          margin: 0 0 24px;
+          font-size: 14px;
+        }
+        .auth-error {
+          color: #ff8a8a;
+          background: rgba(255,80,80,0.08);
+          border: 1px solid rgba(255,120,120,0.25);
+          border-radius: 12px;
+          padding: 10px 12px;
+          margin: 0 0 14px;
+          font-size: 13px;
+        }
+        .auth-form {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          width: 100%;
+        }
+        .field {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          text-align: left;
+        }
+        .field-label {
+          color: var(--foreground-muted);
+          font-size: 12px;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
 
     .field input {
       width: 100%;

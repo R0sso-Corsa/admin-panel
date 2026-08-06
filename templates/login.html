@@ -14,18 +14,22 @@
     <svg class="filter-svg" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <filter id="liquid-glass-admin" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
-                <feImage x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" href="/static/noise.png" crossOrigin="anonymous" />
+                <feImage x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" href="/static/displacement_map.png" crossOrigin="anonymous" />
+                <!-- Red channel displacement -->
                 <feDisplacementMap in="SourceGraphic" in2="map" id="redChannel" result="dispRed" scale="-22" xChannelSelector="R" yChannelSelector="G" />
                 <feColorMatrix in="dispRed" type="matrix"
                     values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="redOut" />
+                <!-- Green channel displacement -->
                 <feDisplacementMap in="SourceGraphic" in2="map" id="greenChannel" result="dispGreen"
                                     scale="-28" xChannelSelector="R" yChannelSelector="G" />
                 <feColorMatrix in="dispGreen" type="matrix"
                     values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="greenOut" />
+                <!-- Blue channel displacement -->
                 <feDisplacementMap in="SourceGraphic" in2="map" id="blueChannel" result="dispBlue"
                                     scale="-34" xChannelSelector="R" yChannelSelector="G" />
                 <feColorMatrix in="dispBlue" type="matrix"
                     values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blueOut" />
+                <!-- Blend channels -->
                 <feBlend in="redOut" in2="greenOut" mode="screen" result="rg" />
                 <feBlend in="rg" in2="blueOut" mode="screen" result="rgbOut" />
                 <feGaussianBlur in="rgbOut" stdDeviation="1.5" result="final" />
