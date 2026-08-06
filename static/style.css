@@ -396,6 +396,7 @@
           position: relative;
           overflow: hidden;
           isolation: isolate;
+          white-space: nowrap;
         }
         .btn-primary::before {
           content: '';
@@ -416,20 +417,20 @@
           z-index: 0;
           border-radius: inherit;
           background: linear-gradient(
-            110deg,
+            90deg,
             transparent 0%,
-            rgba(255,255,255,0.08) 20%,
-            rgba(255,255,255,0.18) 40%,
-            rgba(255,255,255,0.08) 60%,
+            rgba(255,255,255,0.06) 25%,
+            rgba(255,255,255,0.15) 50%,
+            rgba(255,255,255,0.06) 75%,
             transparent 100%
           );
           background-size: 200% 100%;
           background-position: -100% 0;
           opacity: 0;
-          transform: skewX(-12deg) scaleX(0.6);
+          transform: scaleX(0.5);
           transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-                      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-                      background-position 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+                      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                      background-position 1s cubic-bezier(0.16, 1, 0.3, 1);
           pointer-events: none;
           mix-blend-mode: overlay;
         }
@@ -439,8 +440,8 @@
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 8px;
           transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          white-space: nowrap;
         }
         .btn-primary span::before {
           content: '';
@@ -468,7 +469,7 @@
         }
         .btn-primary:hover::after {
           opacity: 1;
-          transform: skewX(-12deg) scaleX(1);
+          transform: scaleX(1);
           background-position: 200% 0;
         }
         .btn-primary:hover span {
