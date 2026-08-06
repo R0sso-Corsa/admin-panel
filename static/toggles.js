@@ -11,41 +11,50 @@
 
     document.querySelectorAll('.liquid-toggle').forEach(toggle => {
         const service = toggle.dataset.service;
+        const setting = toggle.dataset.setting;
         const initialRunning = toggle.dataset.running === 'true';
         
+        // Initialize all toggles to OFF (0) unless explicitly set to ON via data-running
+        const initialState = initialRunning ? 100 : 0;
         toggle.setAttribute('aria-pressed', String(initialRunning));
-        toggle.style.setProperty('--complete', initialRunning ? 100 : 0);
+        toggle.style.setProperty('--complete', initialState);
         toggle.style.setProperty('--hue', 144);
+        // Ensure data-active reflects actual state
+        toggle.dataset.active = initialRunning ? 'true' : 'false';
 
         const sendToggleRequest = (newRunning) => {
             const row = toggle.closest('.service-row');
             const statusEl = row ? row.querySelector('.service-status') : null;
-            toggle.dataset.running = String(newRunning);
+            if (service) {
+                toggle.dataset.running = String(newRunning);
+            }
             if (statusEl) {
                 statusEl.textContent = newRunning ? 'running' : 'stopped';
                 statusEl.className = `service-status ${newRunning ? 'running' : 'stopped'}`;
             }
-            fetch(`/api/services/${service}/toggle`, { method: 'POST' })
-                .then(r => r.json())
-                .then(data => {
-                    const finalRunning = Boolean(data.running);
-                    toggle.setAttribute('aria-pressed', String(finalRunning));
-                    toggle.dataset.running = String(finalRunning);
-                    toggle.style.setProperty('--complete', finalRunning ? 100 : 0);
-                    if (statusEl) {
-                        statusEl.textContent = finalRunning ? 'running' : 'stopped';
-                        statusEl.className = `service-status ${finalRunning ? 'running' : 'stopped'}`;
-                    }
-                })
-                .catch(() => {
-                    toggle.setAttribute('aria-pressed', String(!newRunning));
-                    toggle.dataset.running = String(!newRunning);
-                    toggle.style.setProperty('--complete', !newRunning ? 100 : 0);
-                    if (statusEl) {
-                        statusEl.textContent = !newRunning ? 'running' : 'stopped';
-                        statusEl.className = `service-status ${!newRunning ? 'running' : 'stopped'}`;
-                    }
-                });
+            if (service) {
+                fetch(`/api/services/${service}/toggle`, { method: 'POST' })
+                    .then(r => r.json())
+                    .then(data => {
+                        const finalRunning = Boolean(data.running);
+                        toggle.setAttribute('aria-pressed', String(finalRunning));
+                        toggle.dataset.running = String(finalRunning);
+                        toggle.style.setProperty('--complete', finalRunning ? 100 : 0);
+                        if (statusEl) {
+                            statusEl.textContent = finalRunning ? 'running' : 'stopped';
+                            statusEl.className = `service-status ${finalRunning ? 'running' : 'stopped'}`;
+                        }
+                    })
+                    .catch(() => {
+                        toggle.setAttribute('aria-pressed', String(!newRunning));
+                        toggle.dataset.running = String(!newRunning);
+                        toggle.style.setProperty('--complete', !newRunning ? 100 : 0);
+                        if (statusEl) {
+                            statusEl.textContent = !newRunning ? 'running' : 'stopped';
+                            statusEl.className = `service-status ${!newRunning ? 'running' : 'stopped'}`;
+                        }
+                    });
+            }
         };
 
         const toggleState = async () => {
@@ -66,7 +75,7 @@
             }).to(toggle, {
                 '--complete': pressed ? 0 : 100,
                 duration: 0.18,
-                delay: 0 
+                delay: 0
             });
         };
 

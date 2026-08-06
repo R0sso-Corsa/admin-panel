@@ -201,10 +201,10 @@
             <!-- Service List -->
             <div class="card-group full-width">
               <div class="services-list">
-                {% for service in services %}
-                <div class="service-row" data-service="{{ service.name }}">
+                {% for name, service in services.items() %}
+                <div class="service-row" data-service="{{ name }}">
                   <div class="service-info">
-                    <div class="service-name">{{ service.name }}</div>
+                    <div class="service-name">{{ name }}</div>
                     <div class="service-container">{{ service.container }}</div>
                     <div class="service-status {% if service.running %}running{% else %}stopped{% endif %}">
                       {% if service.running %}Running{% else %}Stopped{% endif %}
@@ -212,10 +212,10 @@
                   </div>
                   <div class="service-actions">
                     <button type="button" 
-                            aria-label="toggle {{ service.name }}" 
+                            aria-label="toggle {{ name }}" 
                             aria-pressed="{{ 'true' if service.running else 'false' }}" 
                             class="liquid-toggle" 
-                            data-service="{{ service.name }}" 
+                            data-service="{{ name }}" 
                             data-running="{{ 'true' if service.running else 'false' }}">
                       <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
                       <div class="indicator__liquid">
@@ -224,7 +224,7 @@
                         <div class="cover"></div>
                       </div>
                     </button>
-                    <form method="post" action="/api/services/{{ service.name }}/delete" onsubmit="return confirm('Delete {{ service.name }}?')">
+                    <form method="post" action="/api/services/{{ name }}/delete" onsubmit="return confirm('Delete {{ name }}?')">
                       <button class="btn btn-danger service-delete" type="submit">Delete</button>
                     </form>
                   </div>
@@ -316,10 +316,8 @@
                   </div>
                   <button type="button" 
                           aria-label="toggle dark mode" 
-                          aria-pressed="true" 
                           class="liquid-toggle" 
                           data-setting="dark-mode"
-                          data-active="true"
                           disabled>
                     <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
                     <div class="indicator__liquid">
@@ -336,10 +334,8 @@
                   </div>
                   <button type="button" 
                           aria-label="toggle animations" 
-                          aria-pressed="true" 
                           class="liquid-toggle" 
-                          data-setting="animations"
-                          data-active="true">
+                          data-setting="animations">
                     <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
                     <div class="indicator__liquid">
                       <div class="shadow"></div>
@@ -355,10 +351,8 @@
                   </div>
                   <button type="button" 
                           aria-label="toggle glass effects" 
-                          aria-pressed="true" 
                           class="liquid-toggle" 
-                          data-setting="glass-effects"
-                          data-active="true">
+                          data-setting="glass-effects">
                     <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
                     <div class="indicator__liquid">
                       <div class="shadow"></div>
@@ -380,10 +374,8 @@
                   </div>
                   <button type="button" 
                           aria-label="toggle auto-refresh" 
-                          aria-pressed="true" 
                           class="liquid-toggle" 
-                          data-setting="auto-refresh"
-                          data-active="true">
+                          data-setting="auto-refresh">
                     <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
                     <div class="indicator__liquid">
                       <div class="shadow"></div>
