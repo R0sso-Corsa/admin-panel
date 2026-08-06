@@ -520,7 +520,7 @@
 
     .indicator--masked .mask {
       position: absolute;
-      height: calc(100% - (2 * var(--border)));
+      height: calc(100% - (4 * var(--border)));
       width: calc(60% - (2 * var(--border)));
       top: 50%;
       background: #000;
