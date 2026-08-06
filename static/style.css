@@ -520,13 +520,13 @@
 
     .indicator--masked .mask {
       position: absolute;
-      height: calc(100% - (4 * var(--border)));
-      width: calc(70% - (2 * var(--border)));
+      height: calc(100% - (2 * var(--border)));
+      width: calc(80% - (2 * var(--border)));
       top: 50%;
       background: #000;
       left: var(--border);
       border-radius: 100px;
-      translate: calc((var(--complete, 0) / 100) * (100cqi - 70cqi - (0 * var(--border)))) -50%;
+      translate: calc((var(--complete, 0) / 100) * (100cqi - 80cqi - (0 * var(--border)))) -50%;
       transition-property: height, width, margin, scale;
       transition-duration: var(--transition);
       transition-timing-function: var(--ease);
@@ -576,13 +576,13 @@
     .indicator__liquid {
       position: absolute;
       height: calc(100% - (2 * var(--border)));
-      width: calc(70% - (2 * var(--border)));
+      width: calc(80% - (2 * var(--border)));
       container-type: inline-size;
       top: 50%;
       background: #0000;
       left: var(--border);
       border-radius: 100px;
-      translate: calc((var(--complete, 0) / 100) * (100cqi - 70% - (2 * var(--border)))) -50%;
+      translate: calc((var(--complete, 0) / 100) * (100cqi - 80% - (2 * var(--border)))) -50%;
       transition-property: scale;
       transition-duration: var(--transition);
       transition-timing-function: var(--ease);
@@ -616,13 +616,13 @@
     .liquid-toggle[data-active='true'] .indicator--masked .mask,
     .liquid-toggle:active .indicator--masked .mask {
       height: calc((100% - (2 * var(--border))) * (1.65 - (var(--delta, 0) * 0.025)));
-      width: calc((70% - (2 * var(--border))) * (1.65 + (var(--delta, 0) * 0.025)));
-      margin-left: calc((70% - (2 * var(--border))) * ((.65 + (var(--delta, 0) * 0.025)) * -0.5));
+      width: calc((80% - (2 * var(--border))) * (1.65 + (var(--delta, 0) * 0.025)));
+      margin-left: calc((80% - (2 * var(--border))) * ((.65 + (var(--delta, 0) * 0.025)) * -0.5));
     }
 
     .liquid-toggle[data-active='true'] .indicator__liquid,
     .liquid-toggle:active .indicator__liquid {
-      scale: calc(1.65 + (var(--delta, 0) * 0.025)) calc(1.65 - (var(--delta, 0) * 0.025));
+      scale: calc(2.0 + (var(--delta, 0) * 0.025)) calc(2.0 - (var(--delta, 0) * 0.025));
     }
 
     .liquid-toggle[data-active='true'] .wrapper,
