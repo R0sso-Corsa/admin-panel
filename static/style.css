@@ -393,6 +393,8 @@
       border-color: rgba(52, 199, 89, 0.55);
       color: #fff;
       transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
     }
     .btn-primary:hover {
       background: rgba(52, 199, 89, 0.95);
@@ -404,6 +406,27 @@
       transform: translateY(0) scale(0.99);
       filter: brightness(0.97);
       transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-text {
+      position: relative;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .btn-bubble {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      border-radius: inherit;
+      background: rgba(52, 199, 89, 0.18);
+      filter: var(--glass-filter);
+      opacity: 0;
+      transform: scale(0.6);
+      transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-primary:hover .btn-bubble {
+      opacity: 1;
+      transform: scale(1.15);
     }
     .btn-danger { background: rgba(255, 69, 58, 0.85); border-color: rgba(255, 69, 58, 0.55); color: #fff; }
     .btn-danger:hover { background: rgba(255, 69, 58, 0.95); }
