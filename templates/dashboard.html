@@ -9,182 +9,497 @@
   <link rel="stylesheet" href="/static/style.css?v=20260806-1503">
 </head>
 <body>
-    <canvas id="bg-canvas"></canvas>
+  <canvas id="bg-canvas"></canvas>
 
-    <!-- Hidden SVG Filters -->
-    <svg class="sr-only" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <filter id="liquid-glass-admin" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
-          <feImage x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" href="/static/noise.png" />
-          <feDisplacementMap in="SourceGraphic" in2="map" id="redChannel" result="dispRed" scale="-10" xChannelSelector="R" yChannelSelector="G" />
-          <feColorMatrix in="dispRed" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="redOut" />
-          <feDisplacementMap in="SourceGraphic" in2="map" id="greenChannel" result="dispGreen" scale="-12" xChannelSelector="R" yChannelSelector="G" />
-          <feColorMatrix in="dispGreen" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="greenOut" />
-          <feDisplacementMap in="SourceGraphic" in2="map" id="blueChannel" result="dispBlue" scale="-14" xChannelSelector="R" yChannelSelector="G" />
-          <feColorMatrix in="dispBlue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blueOut" />
-          <feBlend in="redOut" in2="greenOut" mode="screen" result="rg" />
-          <feBlend in="rg" in2="blueOut" mode="screen" result="rgbOut" />
-          <feGaussianBlur in="rgbOut" stdDeviation="1.5" result="final" />
-        </filter>
-        
-        <filter id="goo">
-          <feGaussianBlur id="SvgjsFeGaussianBlur1000" result="SvgjsFeGaussianBlur1000" in="SourceGraphic" stdDeviation="2"></feGaussianBlur>
-          <feColorMatrix id="SvgjsFeColorMatrix1001" result="SvgjsFeColorMatrix1001" in="SvgjsFeGaussianBlur1000" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 16 -10" type="matrix"></feColorMatrix>
-          <feComposite id="SvgjsFeComposite1002" result="SvgjsFeComposite1002" in="SvgjsFeColorMatrix1001" operator="atop"></feComposite>
-        </filter>
-        <filter id="knockout" colorInterpolationFilters="sRGB">
-          <feColorMatrix result="knocked" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -1 -1 -1 1 0" />
-          <feComponentTransfer>
-            <feFuncR type="linear" slope="3" intercept="-1" /><feFuncG type="linear" slope="3" intercept="-1" /><feFuncB type="linear" slope="3" intercept="-1" />
-          </feComponentTransfer>
-          <feComponentTransfer>
-            <feFuncR type="table" tableValues="0 0 0 0 0 1 1 1 1 1" /><feFuncG type="table" tableValues="0 0 0 0 0 1 1 1 1 1" /><feFuncB type="table" tableValues="0 0 0 0 0 1 1 1 1 1" />
-          </feComponentTransfer>
-        </filter>
-        <filter id="remove-black" color-interpolation-filters="sRGB">
-          <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -255 -255 -255 0 1" result="black-pixels" />
-          <feMorphology in="black-pixels" operator="dilate" radius="0.5" result="smoothed" />
-          <feComposite in="SourceGraphic" in2="smoothed" operator="out" />
-        </filter>
-      </defs>
-    </svg>
+  <!-- Hidden SVG Filters -->
+  <svg class="sr-only" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="liquid-glass-admin" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
+        <feImage x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" href="/static/noise.png" />
+        <feDisplacementMap in="SourceGraphic" in2="map" id="redChannel" result="dispRed" scale="-10" xChannelSelector="R" yChannelSelector="G" />
+        <feColorMatrix in="dispRed" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="redOut" />
+        <feDisplacementMap in="SourceGraphic" in2="map" id="greenChannel" result="dispGreen" scale="-12" xChannelSelector="R" yChannelSelector="G" />
+        <feColorMatrix in="dispGreen" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="greenOut" />
+        <feDisplacementMap in="SourceGraphic" in2="map" id="blueChannel" result="dispBlue" scale="-14" xChannelSelector="R" yChannelSelector="G" />
+        <feColorMatrix in="dispBlue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blueOut" />
+        <feBlend in="redOut" in2="greenOut" mode="screen" result="rg" />
+        <feBlend in="rg" in2="blueOut" mode="screen" result="rgbOut" />
+        <feGaussianBlur in="rgbOut" stdDeviation="1.5" result="final" />
+      </filter>
+      
+      <filter id="goo">
+        <feGaussianBlur id="SvgjsFeGaussianBlur1000" result="SvgjsFeGaussianBlur1000" in="SourceGraphic" stdDeviation="2"></feGaussianBlur>
+        <feColorMatrix id="SvgjsFeColorMatrix1001" result="SvgjsFeColorMatrix1001" in="SvgjsFeGaussianBlur1000" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 16 -10" type="matrix"></feColorMatrix>
+        <feComposite id="SvgjsFeComposite1002" result="SvgjsFeComposite1002" in="SvgjsFeColorMatrix1001" operator="atop"></feComposite>
+      </filter>
+      <filter id="knockout" colorInterpolationFilters="sRGB">
+        <feColorMatrix result="knocked" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -1 -1 -1 1 0" />
+        <feComponentTransfer>
+          <feFuncR type="linear" slope="3" intercept="-1" /><feFuncG type="linear" slope="3" intercept="-1" /><feFuncB type="linear" slope="3" intercept="-1" />
+        </feComponentTransfer>
+        <feComponentTransfer>
+          <feFuncR type="table" tableValues="0 0 0 0 0 1 1 1 1 1" /><feFuncG type="table" tableValues="0 0 0 0 0 1 1 1 1 1" /><feFuncB type="table" tableValues="0 0 0 0 0 1 1 1 1 1" />
+        </feComponentTransfer>
+      </filter>
+      <filter id="remove-black" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -255 -255 -255 0 1" result="black-pixels" />
+        <feMorphology in="black-pixels" operator="dilate" radius="0.5" result="smoothed" />
+        <feComposite in="SourceGraphic" in2="smoothed" operator="out" />
+      </filter>
+    </defs>
+  </svg>
 
-    <div class="page">
-        <div class="dashboard-wrap">
-            <div class="top-bar">
-                <span class="brand">Hermes Agent · Admin</span>
-                <nav class="top-nav">
-                    <a href="/dashboard" class="active">Dashboard</a>
-                    <a href="/services">Services</a>
-                    <a href="/logout">Logout</a>
-                </nav>
-            </div>
+  <div class="page">
+    <div class="settings-shell">
+      <!-- Sidebar Navigation -->
+      <aside class="settings-sidebar" aria-label="Settings navigation">
+        <nav class="sidebar-nav">
+          <ul class="nav-group" data-group="general">
+            <li class="nav-group-header">General</li>
+            <li class="nav-item">
+              <a href="#dashboard" class="nav-link active" data-section="dashboard">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#services" class="nav-link" data-section="services">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                <span>Services</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#logs" class="nav-link" data-section="logs">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                <span>Logs</span>
+              </a>
+            </li>
+          </ul>
 
-            <div class="cards-row">
-                <div class="glass-card" id="card-services">
-                    <div class="glass-surface"></div>
-                    <div class="glass-edge-highlight"></div>
-                    <div class="glass-highlight"></div>
+          <ul class="nav-group" data-group="system">
+            <li class="nav-group-header">System</li>
+            <li class="nav-item">
+              <a href="#settings" class="nav-link" data-section="settings">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Settings</span>
+              </a>
+            </li>
+          </ul>
+
+          <ul class="nav-group" data-group="account">
+            <li class="nav-group-header">Account</li>
+            <li class="nav-item">
+              <a href="#logout" class="nav-link" data-section="logout">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Logout</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="sidebar-footer">
+          <span class="version">Hermes Agent · Admin</span>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="settings-main" role="main">
+        <!-- Section: Dashboard -->
+        <section id="dashboard" class="settings-section active" aria-labelledby="dashboard-heading">
+          <header class="section-header">
+            <h1 id="dashboard-heading" class="section-title">Dashboard</h1>
+            <p class="section-description">Overview of your homelab services and system status</p>
+          </header>
+
+          <div class="content-grid">
+            <!-- Quick Access Cards -->
+            <div class="card-group">
+              <h2 class="group-title">Quick Access</h2>
+              <div class="card-row">
+                <a href="#services" class="glass-card" data-section-link="services">
+                  <div class="glass-surface"></div>
+                  <div class="glass-edge-highlight"></div>
+                  <div class="glass-highlight"></div>
+                  <div class="card-inner">
                     <div class="icon-wrap"><img src="https://www.vectorlogo.zone/logos/docker/docker-icon.svg" alt="Services"></div>
                     <span class="card-label">Services</span>
-                </div>
-                <div class="glass-card" id="card-logs">
-                    <div class="glass-surface"></div>
-                    <div class="glass-edge-highlight"></div>
-                    <div class="glass-highlight"></div>
+                    <span class="card-subtitle">Manage containers</span>
+                  </div>
+                </a>
+                <a href="#logs" class="glass-card" data-section-link="logs">
+                  <div class="glass-surface"></div>
+                  <div class="glass-edge-highlight"></div>
+                  <div class="glass-highlight"></div>
+                  <div class="card-inner">
                     <div class="icon-wrap"><img src="https://www.vectorlogo.zone/logos/loggly/loggly-icon.svg" alt="Logs" onerror="this.style.display='none'"></div>
                     <span class="card-label">Logs</span>
-                </div>
-                <div class="glass-card" id="card-settings">
-                    <div class="glass-surface"></div>
-                    <div class="glass-edge-highlight"></div>
-                    <div class="glass-highlight"></div>
+                    <span class="card-subtitle">View service logs</span>
+                  </div>
+                </a>
+                <a href="#settings" class="glass-card" data-section-link="settings">
+                  <div class="glass-surface"></div>
+                  <div class="glass-edge-highlight"></div>
+                  <div class="glass-highlight"></div>
+                  <div class="card-inner">
                     <div class="icon-wrap"><img src="https://www.vectorlogo.zone/logos/settings/services-icon.svg" alt="Settings" onerror="this.style.display='none'"></div>
                     <span class="card-label">Settings</span>
-                </div>
+                    <span class="card-subtitle">Configure admin</span>
+                  </div>
+                </a>
+              </div>
             </div>
 
-            <!-- 2-Column Layout Grid -->
-            <div class="layout-grid">
-                
-                <!-- Left Column: Service Controls -->
-                <div class="panel">
-                    <h2 class="panel-title">Service Controls</h2>
-                    <div class="services-list">
-                        <div class="service-row" data-service="dashboard">
-                            <div class="service-info">
-                                <div class="service-name">dashboard</div>
-                                <div class="service-container">hermes-dashboard</div>
-                                <div class="service-status stopped">stopped</div>
-                            </div>
-                            <div class="service-actions">
-                                <button type="button" aria-label="toggle" aria-pressed="false" class="liquid-toggle" data-service="dashboard" data-running="false">
-                                    <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
-                                    <div class="indicator__liquid">
-                                        <div class="shadow"></div>
-                                        <div class="wrapper"><div class="liquids"><div class="liquid__shadow"></div><div class="liquid__track"></div></div></div>
-                                        <div class="cover"></div>
-                                    </div>
-                                </button>
-                                <form method="post" action="/api/services/dashboard/delete" onsubmit="return confirm('Delete dashboard?')">
-                                    <button class="btn btn-danger service-delete" type="submit">Delete</button>
-                                </form>
-                            </div>
-                        </div>
-                        
-                        <div class="service-row" data-service="navidrome">
-                            <div class="service-info">
-                                <div class="service-name">navidrome</div>
-                                <div class="service-container">navidrome</div>
-                                <div class="service-status running">running</div>
-                            </div>
-                            <div class="service-actions">
-                                <button type="button" aria-label="toggle" aria-pressed="true" class="liquid-toggle" data-service="navidrome" data-running="true">
-                                    <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
-                                    <div class="indicator__liquid">
-                                        <div class="shadow"></div>
-                                        <div class="wrapper"><div class="liquids"><div class="liquid__shadow"></div><div class="liquid__track"></div></div></div>
-                                        <div class="cover"></div>
-                                    </div>
-                                </button>
-                                <form method="post" action="/api/services/navidrome/delete" onsubmit="return confirm('Delete navidrome?')">
-                                    <button class="btn btn-danger service-delete" type="submit">Delete</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+            <!-- System Status -->
+            <div class="card-group">
+              <h2 class="group-title">System Status</h2>
+              <div class="status-grid">
+                <div class="status-item">
+                  <div class="status-label">System</div>
+                  <div class="status-value">
+                    <span class="status-indicator running"></span>
+                    <span>Operational</span>
+                  </div>
                 </div>
-
-                <!-- Right Column: Quick Actions & Add Service -->
-                <div class="right-col">
-                    <div class="panel">
-                        <h2 class="panel-title">Quick Actions</h2>
-                        <div class="quick-actions">
-                            <form method="post" action="/api/services/start-all">
-                                <button class="btn btn-primary" type="submit">Start All</button>
-                            </form>
-                            <form method="post" action="/api/services/stop-all">
-                                <button class="btn btn-danger" type="submit">Stop All</button>
-                            </form>
-                            <form method="post" action="/logout">
-                                <button class="btn btn-ghost" type="submit">Logout</button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div class="panel">
-                        <h2 class="panel-title">Add Service</h2>
-                        <form method="post" action="/api/services" class="add-service-form">
-                            <label class="field">
-                                <span class="field-label">Name</span>
-                                <input type="text" name="name" required>
-                            </label>
-                            <label class="field">
-                                <span class="field-label">Container</span>
-                                <input type="text" name="container" required>
-                            </label>
-                            <label class="field">
-                                <span class="field-label">Running</span>
-                                <select name="running">
-                                    <option value="true">Running</option>
-                                    <option value="false">Stopped</option>
-                                </select>
-                            </label>
-                            <div class="text-right">
-                                <button class="btn btn-primary" type="submit">Add Service</button>
-                            </div>
-                        </form>
-                    </div>
+                <div class="status-item">
+                  <div class="status-label">Services Running</div>
+                  <div class="status-value">
+                    <span id="running-count" class="stat-number">—</span>
+                    <span class="stat-suffix">/ —</span>
+                  </div>
                 </div>
+                <div class="status-item">
+                  <div class="status-label">Docker</div>
+                  <div class="status-value">
+                    <span class="status-indicator running"></span>
+                    <span>Running</span>
+                  </div>
+                </div>
+                <div class="status-item">
+                  <div class="status-label">Uptime</div>
+                  <div class="status-value" id="uptime">—</div>
+                </div>
+              </div>
             </div>
-        </div>
+          </div>
+        </section>
+
+        <!-- Section: Services -->
+        <section id="services" class="settings-section" aria-labelledby="services-heading">
+          <header class="section-header">
+            <h1 id="services-heading" class="section-title">Services</h1>
+            <p class="section-description">Manage Docker containers and service configurations</p>
+            <div class="section-actions">
+              <form method="post" action="/api/services/start-all">
+                <button class="btn btn-primary" type="submit">Start All</button>
+              </form>
+              <form method="post" action="/api/services/stop-all">
+                <button class="btn btn-danger" type="submit">Stop All</button>
+              </form>
+            </div>
+          </header>
+
+          <div class="content-grid">
+            <!-- Service List -->
+            <div class="card-group full-width">
+              <div class="services-list">
+                {% for service in services %}
+                <div class="service-row" data-service="{{ service.name }}">
+                  <div class="service-info">
+                    <div class="service-name">{{ service.name }}</div>
+                    <div class="service-container">{{ service.container }}</div>
+                    <div class="service-status {% if service.running %}running{% else %}stopped{% endif %}">
+                      {% if service.running %}Running{% else %}Stopped{% endif %}
+                    </div>
+                  </div>
+                  <div class="service-actions">
+                    <button type="button" 
+                            aria-label="toggle {{ service.name }}" 
+                            aria-pressed="{{ 'true' if service.running else 'false' }}" 
+                            class="liquid-toggle" 
+                            data-service="{{ service.name }}" 
+                            data-running="{{ 'true' if service.running else 'false' }}">
+                      <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
+                      <div class="indicator__liquid">
+                        <div class="shadow"></div>
+                        <div class="wrapper"><div class="liquids"><div class="liquid__shadow"></div><div class="liquid__track"></div></div></div>
+                        <div class="cover"></div>
+                      </div>
+                    </button>
+                    <form method="post" action="/api/services/{{ service.name }}/delete" onsubmit="return confirm('Delete {{ service.name }}?')">
+                      <button class="btn btn-danger service-delete" type="submit">Delete</button>
+                    </form>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Add Service Panel -->
+            <div class="card-group">
+              <h2 class="group-title">Add Service</h2>
+              <form method="post" action="/api/services" class="add-service-form">
+                <label class="field">
+                  <span class="field-label">Name</span>
+                  <input type="text" name="name" required placeholder="e.g., plex">
+                </label>
+                <label class="field">
+                  <span class="field-label">Container</span>
+                  <input type="text" name="container" required placeholder="e.g., plex">
+                </label>
+                <label class="field">
+                  <span class="field-label">Running</span>
+                  <select name="running">
+                    <option value="true">Running</option>
+                    <option value="false">Stopped</option>
+                  </select>
+                </label>
+                <div class="form-actions">
+                  <button class="btn btn-primary" type="submit">Add Service</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section: Logs -->
+        <section id="logs" class="settings-section" aria-labelledby="logs-heading">
+          <header class="section-header">
+            <h1 id="logs-heading" class="section-title">Logs</h1>
+            <p class="section-description">View and filter service logs</p>
+          </header>
+
+          <div class="content-grid">
+            <div class="card-group full-width">
+              <div class="log-controls">
+                <label class="field">
+                  <span class="field-label">Service</span>
+                  <select id="log-service" class="log-filter">
+                    <option value="">All Services</option>
+                    {% for service in services %}
+                    <option value="{{ service.name }}">{{ service.name }}</option>
+                    {% endfor %}
+                  </select>
+                </label>
+                <label class="field">
+                  <span class="field-label">Lines</span>
+                  <select id="log-lines" class="log-filter">
+                    <option value="50">50</option>
+                    <option value="100" selected>100</option>
+                    <option value="500">500</option>
+                    <option value="1000">1000</option>
+                  </select>
+                </label>
+                <button id="log-refresh" class="btn btn-primary">Refresh</button>
+              </div>
+
+              <div class="log-viewer" id="log-viewer">
+                <div class="log-placeholder">Select a service and click Refresh to view logs</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section: Settings -->
+        <section id="settings" class="settings-section" aria-labelledby="settings-heading">
+          <header class="section-header">
+            <h1 id="settings-heading" class="section-title">Settings</h1>
+            <p class="section-description">Configure admin panel preferences and system options</p>
+          </header>
+
+          <div class="content-grid">
+            <div class="card-group">
+              <h2 class="group-title">Appearance</h2>
+              <div class="settings-list">
+                <label class="setting-item">
+                  <div class="setting-info">
+                    <span class="setting-label">Dark Mode</span>
+                    <span class="setting-description">Always use dark theme</span>
+                  </div>
+                  <input type="checkbox" class="toggle-input" checked disabled>
+                  <span class="toggle-slider"></span>
+                </label>
+                <label class="setting-item">
+                  <div class="setting-info">
+                    <span class="setting-label">Animations</span>
+                    <span class="setting-description">Enable UI transitions and effects</span>
+                  </div>
+                  <input type="checkbox" class="toggle-input" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+                <label class="setting-item">
+                  <div class="setting-info">
+                    <span class="setting-label">Glass Effects</span>
+                    <span class="setting-description">Enable liquid glass and backdrop blur</span>
+                  </div>
+                  <input type="checkbox" class="toggle-input" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="card-group">
+              <h2 class="group-title">System</h2>
+              <div class="settings-list">
+                <label class="setting-item">
+                  <div class="setting-info">
+                    <span class="setting-label">Auto-refresh Dashboard</span>
+                    <span class="setting-description">Automatically update service status</span>
+                  </div>
+                  <input type="checkbox" class="toggle-input" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+                <label class="setting-item">
+                  <div class="setting-info">
+                    <span class="setting-label">Refresh Interval</span>
+                    <span class="setting-description">How often to poll for updates</span>
+                  </div>
+                  <select class="setting-select">
+                    <option value="10">10 seconds</option>
+                    <option value="30" selected>30 seconds</option>
+                    <option value="60">1 minute</option>
+                    <option value="300">5 minutes</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            <div class="card-group">
+              <h2 class="group-title">Danger Zone</h2>
+              <div class="settings-list danger">
+                <button class="btn btn-danger setting-btn" onclick="confirmAction('reset-config', 'Reset all admin panel settings?')">Reset Configuration</button>
+                <button class="btn btn-danger setting-btn" onclick="confirmAction('clear-logs', 'Clear all cached logs?')">Clear Logs</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section: Logout -->
+        <section id="logout" class="settings-section" aria-labelledby="logout-heading">
+          <header class="section-header">
+            <h1 id="logout-heading" class="section-title">Logout</h1>
+            <p class="section-description">Sign out of the admin panel</p>
+          </header>
+
+          <div class="content-grid">
+            <div class="card-group full-width logout-card">
+              <div class="logout-content">
+                <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <h2>Sign Out</h2>
+                <p>You will be logged out of the admin panel. You'll need to enter your password again to access it.</p>
+                <form method="post" action="/logout">
+                  <button class="btn btn-primary" type="submit">Sign Out</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
+  </div>
 
-    <div class="footer-text">Hermes Agent · Admin</div>
+  <div class="footer-text">Hermes Agent · Admin</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
-    <script type="module" src="/static/background.js"></script>
-    <script src="/static/toggles.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+  <script type="module" src="/static/background.js"></script>
+  <script src="/static/toggles.js"></script>
+  <script>
+    // Section navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = link.getAttribute('href').slice(1);
+        showSection(target);
+      });
+    });
+
+    // Card quick-access links
+    document.querySelectorAll('[data-section-link]').forEach(card => {
+      card.addEventListener('click', e => {
+        e.preventDefault();
+        const target = card.getAttribute('data-section-link');
+        showSection(target);
+      });
+    });
+
+    function showSection(sectionId) {
+      // Update nav
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      document.querySelector(`.nav-link[data-section="${sectionId}"]`)?.classList.add('active');
+      
+      // Update sections
+      document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+      document.getElementById(sectionId)?.classList.add('active');
+      
+      // Scroll to top
+      document.querySelector('.settings-main').scrollTop = 0;
+    }
+
+    // Log viewer
+    const logViewer = document.getElementById('log-viewer');
+    const logService = document.getElementById('log-service');
+    const logLines = document.getElementById('log-lines');
+    const logRefresh = document.getElementById('log-refresh');
+
+    if (logRefresh) {
+      logRefresh.addEventListener('click', async () => {
+        const service = logService.value;
+        const lines = logLines.value;
+        logViewer.innerHTML = '<div class="log-loading">Loading logs...</div>';
+        
+        try {
+          const url = service 
+            ? `/api/logs/${service}?lines=${lines}`
+            : `/api/logs?lines=${lines}`;
+          const res = await fetch(url);
+          const data = await res.json();
+          
+          if (data.logs) {
+            logViewer.innerHTML = data.logs.map(line => 
+              `<div class="log-line"><span class="log-time">${line.time}</span><span class="log-text">${escapeHtml(line.text)}</span></div>`
+            ).join('');
+          } else {
+            logViewer.innerHTML = '<div class="log-placeholder">No logs available</div>';
+          }
+        } catch (err) {
+          logViewer.innerHTML = `<div class="log-error">Error loading logs: ${err.message}</div>`;
+        }
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function confirmAction(action, message) {
+      if (confirm(message)) {
+        // Could add actual API calls here
+        alert(`${action} confirmed (demo)`);
+      }
+    }
+
+    // Fetch initial stats
+    async function fetchStats() {
+      try {
+        const res = await fetch('/api/stats');
+        const data = await res.json();
+        if (data.running !== undefined) {
+          document.getElementById('running-count').textContent = data.running;
+        }
+        if (data.total !== undefined) {
+          document.querySelector('.stat-suffix').textContent = ` / ${data.total}`;
+        }
+        if (data.uptime) {
+          document.getElementById('uptime').textContent = data.uptime;
+        }
+      } catch (err) {
+        console.error('Failed to fetch stats:', err);
+      }
+    }
+
+    fetchStats();
+    setInterval(fetchStats, 30000);
+  </script>
 </body>
 </html>

@@ -140,6 +140,57 @@ async def logout():
     return response
 
 
+@app.get("/api/stats")
+async def api_stats(request: Request):
+    require_auth(request)
+    services = load_services()
+    running = 0
+    for svc in services.values():
+        r, _ = docker_cmd("ps", "-q", "-f", f"name={svc['container']}")
+        if r:
+            running += 1
+    # Get uptime
+    try:
+        import subprocess
+        uptime_out = subprocess.run(["uptime", "-p"], capture_output=True, text=True).stdout.strip()
+    except Exception:
+        uptime_out = "Unknown"
+    return JSONResponse({"running": running, "total": len(services), "uptime": uptime_out})
+
+
+@app.get("/api/logs")
+@app.get("/api/logs/{service_name}")
+async def api_logs(request: Request, service_name: str = None, lines: int = 100):
+    require_auth(request)
+    services = load_services()
+    
+    if service_name and service_name not in services:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    containers = [svc['container'] for name, svc in services.items() 
+                  if not service_name or name == service_name]
+    
+    all_logs = []
+    for container in containers:
+        success, out = docker_cmd("logs", "--tail", str(lines), container)
+        if success and out:
+            for line in out.strip().split('\n'):
+                import re
+                # Parse docker log format: timestamp message
+                match = re.match(r'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s*(.*)', line)
+                if match:
+                    time_str, text = match.groups()
+                    time_display = time_str[11:19]  # HH:MM:SS
+                else:
+                    time_display = ""
+                    text = line
+                all_logs.append({"time": time_display, "text": text, "service": container})
+    
+    # Sort by time (newest first)
+    all_logs.sort(key=lambda x: x["time"], reverse=True)
+    return JSONResponse({"logs": all_logs[:lines]})
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8081)
