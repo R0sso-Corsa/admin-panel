@@ -745,8 +745,8 @@
     .card-content {
       position: relative;
       z-index: 3;
-      padding: 32px;
-      padding-bottom: 36px;
+      padding: 40px;
+      padding-bottom: 44px;
     }
 
     .auth-title {
