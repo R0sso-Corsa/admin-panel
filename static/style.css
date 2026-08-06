@@ -816,22 +816,23 @@
         }
 
         .glass-card {
-          position: relative;
-          border-radius: var(--radius);
-          pointer-events: auto;
-          text-decoration: none;
-          color: inherit;
-          transform-style: preserve-3d;
-          transition: transform 0.15s ease-out;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 14px;
-          cursor: default;
-          width: 100%;
-          max-width: 420px;
-        }
+              position: relative;
+              border-radius: var(--radius);
+              pointer-events: auto;
+              text-decoration: none;
+              color: inherit;
+              transform-style: preserve-3d;
+              transition: transform 0.15s ease-out;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              gap: 14px;
+              cursor: default;
+              width: 100%;
+              max-width: 420px;
+              height: auto;
+            }
         .glass-surface {
           position: absolute;
           inset: 0;
