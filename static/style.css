@@ -389,68 +389,40 @@
       background: hsl(0 0% 0% / calc(var(--glass-frost-alpha) + 0.04));
     }
     .btn-primary {
-      background: rgba(52, 199, 89, 0.85);
-      border-color: rgba(52, 199, 89, 0.55);
-      color: #fff;
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
-    .btn-text {
-      position: relative;
-      z-index: 2;
-      pointer-events: none;
-    }
-    .btn-liquid {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      border-radius: inherit;
-      background: rgba(52, 199, 89, 0.85);
-      transform: scale(1);
-      opacity: 1;
-      transition: transform 0.24s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1), filter 0.24s cubic-bezier(0.4, 0, 0.2, 1);
-      filter: url(#liquid-glass-admin);
-      will-change: transform, opacity, filter;
-    }
-    .btn-primary:hover .btn-liquid {
-      transform: scale(1.12);
-      opacity: 1;
-      filter: url(#liquid-glass-admin);
-      transition: transform 0.24s cubic-bezier(0.4, 0, 0.2, 1) 0.12s, opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1) 0.12s, filter 0.24s cubic-bezier(0.4, 0, 0.2, 1) 0.12s;
-    }
-    .btn-primary:active .btn-liquid {
-      transform: scale(1.02);
-      transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1) 0s;
-    }
-    .btn-primary::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.18) 45%, rgba(255,255,255,0.05) 55%, transparent 100%);
-      opacity: 0;
-      transform: translateX(-30%) skewX(-15deg);
-      transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      pointer-events: none;
-      mix-blend-mode: overlay;
-    }
-    .btn-primary:hover {
-      background: rgba(52, 199, 89, 0.95);
-      transform: translateY(-1px) scale(1.01);
-      box-shadow: 0 6px 24px rgba(52, 199, 89, 0.35), 0 0 0 1px rgba(52, 199, 89, 0.2);
-      filter: brightness(1.04);
-    }
-    .btn-primary:hover::after {
-      opacity: 1;
-      transform: translateX(30%) skewX(-15deg);
-    }
-    .btn-primary:active {
-      transform: translateY(0) scale(0.99);
-      filter: brightness(0.97);
-      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+          background: rgba(52, 199, 89, 0.85);
+          border-color: rgba(52, 199, 89, 0.55);
+          color: #fff;
+          transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
+        }
+        .btn-primary::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.18) 45%, rgba(255,255,255,0.05) 55%, transparent 100%);
+          opacity: 0;
+          transform: translateX(-30%) skewX(-15deg);
+          transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+          pointer-events: none;
+          mix-blend-mode: overlay;
+        }
+        .btn-primary:hover {
+          background: rgba(52, 199, 89, 0.95);
+          transform: translateY(-1px) scale(1.01);
+          box-shadow: 0 6px 24px rgba(52, 199, 89, 0.35), 0 0 0 1px rgba(52, 199, 89, 0.2);
+          filter: brightness(1.04);
+        }
+        .btn-primary:hover::after {
+          opacity: 1;
+          transform: translateX(30%) skewX(-15deg);
+        }
+        .btn-primary:active {
+          transform: translateY(0) scale(0.99);
+          filter: brightness(0.97);
+          transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+        }
     .btn-danger { background: rgba(255, 69, 58, 0.85); border-color: rgba(255, 69, 58, 0.55); color: #fff; }
     .btn-danger:hover { background: rgba(255, 69, 58, 0.95); }
     .btn-ghost { background: rgba(255,255,255,0.06); color: var(--foreground-muted); }
