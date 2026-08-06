@@ -16,11 +16,11 @@
       <defs>
         <filter id="liquid-glass-admin" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
           <feImage x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" href="/static/noise.png" />
-          <feDisplacementMap in="SourceGraphic" in2="map" id="redChannel" result="dispRed" scale="-12" xChannelSelector="R" yChannelSelector="G" />
+          <feDisplacementMap in="SourceGraphic" in2="map" id="redChannel" result="dispRed" scale="-10" xChannelSelector="R" yChannelSelector="G" />
           <feColorMatrix in="dispRed" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="redOut" />
-          <feDisplacementMap in="SourceGraphic" in2="map" id="greenChannel" result="dispGreen" scale="-14" xChannelSelector="R" yChannelSelector="G" />
+          <feDisplacementMap in="SourceGraphic" in2="map" id="greenChannel" result="dispGreen" scale="-12" xChannelSelector="R" yChannelSelector="G" />
           <feColorMatrix in="dispGreen" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="greenOut" />
-          <feDisplacementMap in="SourceGraphic" in2="map" id="blueChannel" result="dispBlue" scale="-16" xChannelSelector="R" yChannelSelector="G" />
+          <feDisplacementMap in="SourceGraphic" in2="map" id="blueChannel" result="dispBlue" scale="-14" xChannelSelector="R" yChannelSelector="G" />
           <feColorMatrix in="dispBlue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blueOut" />
           <feBlend in="redOut" in2="greenOut" mode="screen" result="rg" />
           <feBlend in="rg" in2="blueOut" mode="screen" result="rgbOut" />
