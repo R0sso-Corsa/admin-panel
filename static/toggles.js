@@ -19,8 +19,8 @@
         toggle.setAttribute('aria-pressed', String(initialRunning));
         toggle.style.setProperty('--complete', initialState);
         toggle.style.setProperty('--hue', 144);
-        // Don't set data-active during init - only during actual interaction
-        toggle.removeAttribute('data-active');
+        // Do NOT set data-active during init - it should only be set during actual interaction
+        // to avoid showing the expanded bubble before user interaction
 
         const sendToggleRequest = (newRunning) => {
             const row = toggle.closest('.service-row');
