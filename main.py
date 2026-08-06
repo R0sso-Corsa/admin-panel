@@ -158,6 +158,71 @@ async def api_stats(request: Request):
     return JSONResponse({"running": running, "total": len(services), "uptime": uptime_out})
 
 
+@app.get("/api/system")
+async def api_system(request: Request):
+    require_auth(request)
+    stats = {
+        "cpu": "N/A",
+        "memory": "N/A",
+        "disk": "N/A",
+        "containers": {"total": 0, "running": 0},
+    }
+    # CPU
+    try:
+        with open("/proc/loadavg") as f:
+            stats["cpu"] = f.read().strip().split()[0]
+    except Exception:
+        pass
+    # Memory
+    try:
+        with open("/proc/meminfo") as f:
+            lines = f.readlines()
+        mem = {}
+        for line in lines[:5]:
+            parts = line.split()
+            mem[parts[0].rstrip(":")] = int(parts[1])
+        total = mem.get("MemTotal", 0)
+        avail = mem.get("MemAvailable", 0)
+        used = total - avail
+        stats["memory"] = {
+            "used_mb": round(used / 1024),
+            "total_mb": round(total / 1024),
+            "percent": round((used / total) * 100) if total else 0,
+        }
+    except Exception:
+        pass
+    # Disk
+    try:
+        import shutil
+        usage = shutil.disk_usage("/")
+        stats["disk"] = {
+            "used_gb": round(usage.used / (1024**3), 1),
+            "total_gb": round(usage.total / (1024**3), 1),
+            "percent": round((usage.used / usage.total) * 100),
+        }
+    except Exception:
+        pass
+    # Containers
+    success, out = docker_cmd("ps", "-a", "--format", "{{.Names}}|{{.Status}}")
+    if success and out:
+        stats["containers"]["total"] = len(out.strip().split("\n"))
+        stats["containers"]["running"] = sum(1 for line in out.strip().split("\n") if "Up" in line)
+    return JSONResponse(stats)
+
+
+@app.post("/api/services/{name}/restart")
+async def restart_service(name: str, request: Request):
+    require_auth(request)
+    services = load_services()
+    if name not in services:
+        raise HTTPException(status_code=404, detail="Service not found")
+    svc = services[name]
+    success, out = docker_cmd("restart", svc["container"])
+    if not success:
+        raise HTTPException(status_code=500, detail=f"Failed to restart: {out}")
+    return JSONResponse({"ok": True, "running": True})
+
+
 @app.get("/api/logs")
 @app.get("/api/logs/{service_name}")
 async def api_logs(request: Request, service_name: str = None, lines: int = 100):

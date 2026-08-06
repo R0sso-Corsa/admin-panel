@@ -80,8 +80,14 @@
             <li class="nav-group-header">System</li>
             <li class="nav-item">
               <a href="#settings" class="nav-link" data-section="settings">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0-.33-1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 <span>Settings</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#system" class="nav-link" data-section="system">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                <span>System</span>
               </a>
             </li>
           </ul>
@@ -182,6 +188,23 @@
           </div>
         </section>
 
+        <!-- Quick Stats -->
+        <div class="stats-strip">
+          <div class="stat-card" id="running-card">
+            <div class="stat-value" id="running-count">--</div>
+            <div class="stat-label">Running</div>
+            <div class="stat-suffix"> / --</div>
+          </div>
+          <div class="stat-card" id="uptime-card">
+            <div class="stat-value" id="uptime">--</div>
+            <div class="stat-label">Uptime</div>
+          </div>
+          <div class="stat-card" id="docker-card">
+            <div class="stat-value" id="docker-count">--</div>
+            <div class="stat-label">Docker</div>
+          </div>
+        </div>
+
         <!-- Section: Services -->
         <section id="services" class="settings-section" aria-labelledby="services-heading">
           <header class="section-header">
@@ -202,7 +225,7 @@
             <div class="card-group full-width">
               <div class="services-list">
                 {% for name, service in services.items() %}
-                <div class="service-row" data-service="{{ name }}">
+                <div class="service-row" data-service="{{ name }}" style="cursor:pointer" data-open-service="{{ name }}">
                   <div class="service-info">
                     <div class="service-name">{{ name }}</div>
                     <div class="service-container">{{ service.container }}</div>
@@ -210,7 +233,7 @@
                       {% if service.running %}Running{% else %}Stopped{% endif %}
                     </div>
                   </div>
-                  <div class="service-actions">
+                  <div class="service-actions" onclick="event.stopPropagation()">
                     <button type="button" 
                             aria-label="toggle {{ name }}" 
                             aria-pressed="{{ 'true' if service.running else 'false' }}" 
@@ -274,8 +297,8 @@
                   <span class="field-label">Service</span>
                   <select id="log-service" class="log-filter">
                     <option value="">All Services</option>
-                    {% for service in services %}
-                    <option value="{{ service.name }}">{{ service.name }}</option>
+                    {% for name, service in services.items() %}
+                    <option value="{{ name }}">{{ name }}</option>
                     {% endfor %}
                   </select>
                 </label>
@@ -297,6 +320,76 @@
             </div>
           </div>
         </section>
+
+        <!-- Section: System -->
+        <section id="system" class="settings-section" aria-labelledby="system-heading">
+          <header class="section-header">
+            <h1 id="system-heading" class="section-title">System</h1>
+            <p class="section-description">Server health and container overview</p>
+          </header>
+
+          <div class="content-grid">
+            <div class="system-grid">
+              <div class="system-card" id="sys-cpu">
+                <div class="system-label">CPU Load</div>
+                <div class="system-value" id="sys-cpu-value">--</div>
+                <div class="system-bar"><div class="system-bar-fill" id="sys-cpu-bar"></div></div>
+              </div>
+              <div class="system-card" id="sys-memory">
+                <div class="system-label">Memory</div>
+                <div class="system-value" id="sys-mem-value">--</div>
+                <div class="system-bar"><div class="system-bar-fill" id="sys-mem-bar"></div></div>
+              </div>
+              <div class="system-card" id="sys-disk">
+                <div class="system-label">Disk</div>
+                <div class="system-value" id="sys-disk-value">--</div>
+                <div class="system-bar"><div class="system-bar-fill" id="sys-disk-bar"></div></div>
+              </div>
+              <div class="system-card" id="sys-containers">
+                <div class="system-label">Containers</div>
+                <div class="system-value" id="sys-container-value">--</div>
+                <div class="system-hint" id="sys-container-hint">--</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Service Detail Modal -->
+        <div class="modal-backdrop" id="service-modal" style="display:none">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h2 class="modal-title" id="modal-service-name">Service</h2>
+              <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+              <div class="modal-row">
+                <span class="modal-label">Container</span>
+                <span class="modal-value" id="modal-container">--</span>
+              </div>
+              <div class="modal-row">
+                <span class="modal-label">Status</span>
+                <span class="modal-value" id="modal-status">--</span>
+              </div>
+              <div class="modal-actions">
+                <form method="post" id="modal-restart-form">
+                  <button class="btn btn-primary" type="submit">Restart</button>
+                </form>
+                <form method="post" id="modal-delete-form" onsubmit="return confirm('Delete this service?')">
+                  <button class="btn btn-danger" type="submit">Delete</button>
+                </form>
+              </div>
+              <div class="modal-logs">
+                <div class="modal-logs-header">
+                  <span>Recent Logs</span>
+                  <button class="btn btn-secondary" id="modal-log-refresh" type="button">Refresh</button>
+                </div>
+                <div class="log-viewer modal-log-viewer" id="modal-log-viewer">
+                  <div class="log-placeholder">Loading...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- Section: Settings -->
         <section id="settings" class="settings-section" aria-labelledby="settings-heading">
@@ -439,8 +532,8 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
-  <script type="module" src="/static/background.js"></script>
-  <script src="/static/toggles.js"></script>
+  <script type="module" src="/static/background.js?v=20260806-2026"></script>
+  <script src="/static/toggles.js?v=20260806-2026"></script>
   <script>
     // Section navigation
     document.querySelectorAll('.nav-link').forEach(link => {
@@ -521,16 +614,43 @@
     // Fetch initial stats
     async function fetchStats() {
       try {
-        const res = await fetch('/api/stats');
-        const data = await res.json();
-        if (data.running !== undefined) {
-          document.getElementById('running-count').textContent = data.running;
+        const [statsRes, sysRes] = await Promise.all([
+          fetch('/api/stats'),
+          fetch('/api/system')
+        ]);
+        const stats = await statsRes.json();
+        const sys = await sysRes.json();
+
+        if (stats.running !== undefined) {
+          document.getElementById('running-count').textContent = stats.running;
         }
-        if (data.total !== undefined) {
-          document.querySelector('.stat-suffix').textContent = ` / ${data.total}`;
+        if (stats.total !== undefined) {
+          document.querySelector('.stat-suffix').textContent = ` / ${stats.total}`;
         }
-        if (data.uptime) {
-          document.getElementById('uptime').textContent = data.uptime;
+        if (stats.uptime) {
+          document.getElementById('uptime').textContent = stats.uptime;
+        }
+
+        // Update docker count from system endpoint
+        if (sys.containers) {
+          document.getElementById('docker-count').textContent = `${sys.containers.running}/${sys.containers.total}`;
+        }
+
+        // Update system cards if visible
+        document.getElementById('sys-cpu-value').textContent = sys.cpu || '--';
+        document.getElementById('sys-cpu-bar').style.width = Math.min(parseFloat(sys.cpu || '0'), 100) + '%';
+
+        if (sys.memory) {
+          document.getElementById('sys-mem-value').textContent = `${sys.memory.used_mb} MB`;
+          document.getElementById('sys-mem-bar').style.width = sys.memory.percent + '%';
+        }
+        if (sys.disk) {
+          document.getElementById('sys-disk-value').textContent = `${sys.disk.used_gb} / ${sys.disk.total_gb} GB`;
+          document.getElementById('sys-disk-bar').style.width = sys.disk.percent + '%';
+        }
+        if (sys.containers) {
+          document.getElementById('sys-container-value').textContent = `${sys.containers.running} / ${sys.containers.total}`;
+          document.getElementById('sys-container-hint').textContent = 'Docker containers';
         }
       } catch (err) {
         console.error('Failed to fetch stats:', err);
