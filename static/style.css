@@ -505,7 +505,7 @@
     }
 
     .indicator--masked {
-      background: var(--checked);
+      background: color-mix(in srgb, var(--checked) 35%, transparent);
       z-index: 12;
       height: 100%;
       width: 100%;
@@ -582,6 +582,7 @@
       background: #0000;
       left: var(--border);
       border-radius: 100px;
+      z-index: 15;
       translate: calc((var(--complete, 0) / 100) * (100cqi - 100% - (2 * var(--border)))) -50%;
       transition-property: scale;
       transition-duration: var(--transition);
