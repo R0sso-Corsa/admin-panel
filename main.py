@@ -2,6 +2,7 @@ import os
 import secrets
 import subprocess
 import json
+import time
 from pathlib import Path
 from fastapi import FastAPI, Request, Form, HTTPException, Depends, Response
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
@@ -15,7 +16,6 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "change-me-in-production")
 SESSION_COOKIE = "admin_session"
 
 app = FastAPI()
-
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 
@@ -43,6 +43,166 @@ def docker_cmd(*args: str) -> tuple[bool, str]:
         return result.returncode == 0, result.stdout.strip()
     except Exception as exc:
         return False, str(exc)
+
+
+def container_running(container_name: str) -> bool:
+    success, out = docker_cmd("ps", "-q", "-f", f"name={container_name}")
+    if not success or not out:
+        return False
+    success2, out2 = docker_cmd("ps", "-a", "--filter", f"name={container_name}", "--format", "{{.Names}}|{{.Status}}")
+    if not success2 or not out2:
+        return False
+    for line in out2.strip().split("\n"):
+        if line.startswith(f"{container_name}|") and line.split("|", 1)[1].startswith("Up"):
+            return True
+    return False
+
+
+def read_pid_file(path: str) -> int | None:
+    try:
+        text = Path(path).read_text().strip()
+        if text:
+            return int(text)
+    except Exception:
+        pass
+    return None
+
+
+def discover_pid_by_cmd(cmd_substring: str) -> int | None:
+    try:
+        out = subprocess.run(["ps", "-eo", "pid,cmd"], capture_output=True, text=True, timeout=10).stdout.strip()
+        for line in out.split("\n")[1:]:
+            parts = line.strip().split(None, 1)
+            if len(parts) == 2 and cmd_substring in parts[1]:
+                return int(parts[0])
+    except Exception:
+        pass
+    return None
+
+
+def process_running(pid: int) -> bool:
+    try:
+        os.kill(pid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        # Process exists but we can't signal it; treat as running
+        return True
+    except Exception:
+        return False
+
+
+def start_process(service: dict) -> bool:
+    cmd = service.get("command", "")
+    cwd = service.get("working_dir", "/home/vps")
+    pid_file = service.get("pid_file")
+    if not cmd:
+        return False
+    # Check if already running using stored PID or discovered PID
+    existing_pid = read_pid_file(pid_file) if pid_file else None
+    if existing_pid is not None and process_running(existing_pid):
+        return True
+    if pid_file:
+        Path(pid_file).unlink(missing_ok=True)
+    try:
+        proc = subprocess.Popen(
+            cmd,
+            shell=True,
+            cwd=cwd,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            start_new_session=True,
+        )
+        if pid_file:
+            Path(pid_file).write_text(str(proc.pid))
+        return True
+    except Exception:
+        return False
+
+
+def stop_process(service: dict) -> bool:
+    pid = None
+    pid_file = service.get("pid_file")
+    if pid_file:
+        pid = read_pid_file(pid_file)
+    if pid is None:
+        pid = discover_pid_by_cmd(service.get("command", "").split()[0] if service.get("command") else "")
+    if pid is None:
+        return True
+    try:
+        os.kill(pid, 15)
+        for _ in range(10):
+            if not process_running(pid):
+                return True
+            time.sleep(0.5)
+        os.kill(pid, 9)
+        return True
+    except Exception:
+        return False
+
+
+def service_running(service: dict) -> bool:
+    kind = service.get("kind", "docker")
+    if kind == "process":
+        pid_file = service.get("pid_file")
+        pid = read_pid_file(pid_file) if pid_file else None
+        if pid is None and service.get("command"):
+            pid = discover_pid_by_cmd(service.get("command", "").split()[0])
+        if pid is not None and process_running(pid):
+            if pid_file:
+                try:
+                    Path(pid_file).write_text(str(pid))
+                except Exception:
+                    pass
+            return True
+        return False
+    return container_running(service.get("container", ""))
+
+
+def start_service_cmd(service: dict) -> bool:
+    kind = service.get("kind", "docker")
+    if kind == "process":
+        return start_process(service)
+    success, _ = docker_cmd("start", service["container"])
+    return success
+
+
+def stop_service_cmd(service: dict) -> bool:
+    kind = service.get("kind", "docker")
+    if kind == "process":
+        return stop_process(service)
+    success, _ = docker_cmd("stop", service["container"])
+    return success
+
+
+def service_logs(service: dict, lines: int = 100) -> list[dict]:
+    kind = service.get("kind", "docker")
+    log_file = service.get("log_file")
+    if kind == "process" and log_file:
+        try:
+            text = Path(log_file).read_text(errors="ignore")
+            rows = text.splitlines()
+            rows = [r for r in rows if r.strip()]
+            rows = rows[-lines:]
+            return [{"time": "", "text": line, "service": service.get("name", "")} for line in rows]
+        except Exception:
+            return []
+    container = service.get("container", "")
+    try:
+        result = subprocess.run(
+            ["docker", "logs", "--tail", str(lines), container],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            timeout=30,
+        )
+        out = result.stdout.strip()
+        if not out:
+            return []
+        return [{"time": "", "text": line, "service": container} for line in out.split("\n") if line.strip()]
+    except Exception:
+        return []
 
 
 def get_session(request: Request) -> str | None:
@@ -88,8 +248,7 @@ async def api_services(request: Request):
     services = load_services()
     result = {}
     for name, svc in services.items():
-        running, _ = docker_cmd("ps", "-q", "-f", f"name={svc['container']}")
-        result[name] = {**svc, "running": running}
+        result[name] = {**svc, "running": service_running(svc)}
     return JSONResponse(result)
 
 
@@ -100,17 +259,16 @@ async def toggle_service(name: str, request: Request):
     if name not in services:
         raise HTTPException(status_code=404, detail="Service not found")
     svc = services[name]
-    running, _ = docker_cmd("ps", "-q", "-f", f"name={svc['container']}")
-    if running:
-        success, out = docker_cmd("stop", svc["container"])
+    was_running = service_running(svc)
+    if was_running:
+        success = stop_service_cmd(svc)
         action = "stop"
     else:
-        success, out = docker_cmd("start", svc["container"])
+        success = start_service_cmd(svc)
         action = "start"
     if not success:
-        raise HTTPException(status_code=500, detail=f"Failed to {action}: {out}")
-    running_after, _ = docker_cmd("ps", "-q", "-f", f"name={svc['container']}")
-    return JSONResponse({"ok": True, "running": bool(running_after)})
+        raise HTTPException(status_code=500, detail=f"Failed to {action}")
+    return JSONResponse({"ok": True, "running": service_running(svc)})
 
 
 @app.post("/api/services")
@@ -146,12 +304,10 @@ async def api_stats(request: Request):
     services = load_services()
     running = 0
     for svc in services.values():
-        r, _ = docker_cmd("ps", "-q", "-f", f"name={svc['container']}")
-        if r:
+        if service_running(svc):
             running += 1
     # Get uptime
     try:
-        import subprocess
         uptime_out = subprocess.run(["uptime", "-p"], capture_output=True, text=True).stdout.strip()
     except Exception:
         uptime_out = "Unknown"
@@ -228,22 +384,18 @@ async def restart_service(name: str, request: Request):
 async def api_logs(request: Request, service_name: str = None, lines: int = 100):
     require_auth(request)
     services = load_services()
-    
+
     if service_name and service_name not in services:
         raise HTTPException(status_code=404, detail="Service not found")
-    
-    containers = [svc['container'] for name, svc in services.items() 
-                  if not service_name or name == service_name]
-    
+
+    target_names = [service_name] if service_name else list(services.keys())
     all_logs = []
-    for container in containers:
-        success, out = docker_cmd("logs", "--tail", str(lines), container)
-        if success and out:
-            for line in out.strip().split('\n'):
-                all_logs.append({"time": "", "text": line, "service": container})
-    
-    # Sort by time (newest first)
-    all_logs.sort(key=lambda x: x["time"], reverse=True)
+    for name in target_names:
+        svc = services.get(name, {})
+        logs = service_logs(svc, lines=lines)
+        all_logs.extend(logs)
+
+    all_logs.sort(key=lambda x: x.get("time", ""), reverse=True)
     return JSONResponse({"logs": all_logs[:lines]})
 
 
