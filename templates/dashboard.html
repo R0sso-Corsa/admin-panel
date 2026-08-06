@@ -309,44 +309,91 @@
             <div class="card-group">
               <h2 class="group-title">Appearance</h2>
               <div class="settings-list">
-                <label class="setting-item">
+                <div class="setting-item">
                   <div class="setting-info">
                     <span class="setting-label">Dark Mode</span>
                     <span class="setting-description">Always use dark theme</span>
                   </div>
-                  <input type="checkbox" class="toggle-input" checked disabled>
-                  <span class="toggle-slider"></span>
-                </label>
-                <label class="setting-item">
+                  <button type="button" 
+                          aria-label="toggle dark mode" 
+                          aria-pressed="true" 
+                          class="liquid-toggle" 
+                          data-setting="dark-mode"
+                          data-active="true"
+                          disabled>
+                    <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
+                    <div class="indicator__liquid">
+                      <div class="shadow"></div>
+                      <div class="wrapper"><div class="liquids"><div class="liquid__shadow"></div><div class="liquid__track"></div></div></div>
+                      <div class="cover"></div>
+                    </div>
+                  </button>
+                </div>
+                <div class="setting-item">
                   <div class="setting-info">
                     <span class="setting-label">Animations</span>
                     <span class="setting-description">Enable UI transitions and effects</span>
                   </div>
-                  <input type="checkbox" class="toggle-input" checked>
-                  <span class="toggle-slider"></span>
-                </label>
-                <label class="setting-item">
+                  <button type="button" 
+                          aria-label="toggle animations" 
+                          aria-pressed="true" 
+                          class="liquid-toggle" 
+                          data-setting="animations"
+                          data-active="true">
+                    <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
+                    <div class="indicator__liquid">
+                      <div class="shadow"></div>
+                      <div class="wrapper"><div class="liquids"><div class="liquid__shadow"></div><div class="liquid__track"></div></div></div>
+                      <div class="cover"></div>
+                    </div>
+                  </button>
+                </div>
+                <div class="setting-item">
                   <div class="setting-info">
                     <span class="setting-label">Glass Effects</span>
                     <span class="setting-description">Enable liquid glass and backdrop blur</span>
                   </div>
-                  <input type="checkbox" class="toggle-input" checked>
-                  <span class="toggle-slider"></span>
-                </label>
+                  <button type="button" 
+                          aria-label="toggle glass effects" 
+                          aria-pressed="true" 
+                          class="liquid-toggle" 
+                          data-setting="glass-effects"
+                          data-active="true">
+                    <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
+                    <div class="indicator__liquid">
+                      <div class="shadow"></div>
+                      <div class="wrapper"><div class="liquids"><div class="liquid__shadow"></div><div class="liquid__track"></div></div></div>
+                      <div class="cover"></div>
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
 
             <div class="card-group">
               <h2 class="group-title">System</h2>
               <div class="settings-list">
-                <label class="setting-item">
+                <div class="setting-item">
                   <div class="setting-info">
                     <span class="setting-label">Auto-refresh Dashboard</span>
                     <span class="setting-description">Automatically update service status</span>
                   </div>
-                  <input type="checkbox" class="toggle-input" checked>
-                  <span class="toggle-slider"></span>
-                </label>
+                  <button type="button" 
+                          aria-label="toggle auto-refresh" 
+                          aria-pressed="true" 
+                          class="liquid-toggle" 
+                          data-setting="auto-refresh"
+                          data-active="true">
+                    <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
+                    <div class="indicator__liquid">
+                      <div class="shadow"></div>
+                      <div class="wrapper"><div class="liquids"><div class="liquid__shadow"></div><div class="liquid__track"></div></div></div>
+                      <div class="cover"></div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
                 <label class="setting-item">
                   <div class="setting-info">
                     <span class="setting-label">Refresh Interval</span>
