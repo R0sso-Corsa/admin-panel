@@ -922,12 +922,12 @@
           --mouse-y: 50%;
         }
         .card-content {
-          position: relative;
-          z-index: 3;
-          padding: 32px;
-          text-align: center;
-          width: 100%;
-        }
+                  position: relative;
+                  z-index: 3;
+                  padding: 48px 32px;
+                  text-align: center;
+                  width: 100%;
+                }
         .auth-title {
           color: var(--foreground);
           margin: 0 0 8px;
