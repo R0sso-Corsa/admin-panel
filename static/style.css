@@ -396,6 +396,34 @@
       position: relative;
       overflow: hidden;
     }
+    .btn-text {
+      position: relative;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .btn-liquid {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      border-radius: inherit;
+      background: rgba(52, 199, 89, 0.85);
+      transform: scale(1);
+      opacity: 1;
+      transition: transform 0.24s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1), filter 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+      filter: url(#liquid-glass-admin);
+      will-change: transform, opacity, filter;
+    }
+    .btn-primary:hover .btn-liquid {
+      transform: scale(1.12);
+      opacity: 1;
+      filter: url(#liquid-glass-admin);
+      transition: transform 0.24s cubic-bezier(0.4, 0, 0.2, 1) 0.12s, opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1) 0.12s, filter 0.24s cubic-bezier(0.4, 0, 0.2, 1) 0.12s;
+    }
+    .btn-primary:active .btn-liquid {
+      transform: scale(1.02);
+      transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+    }
     .btn-primary::after {
       content: '';
       position: absolute;
