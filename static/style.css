@@ -746,6 +746,7 @@
       position: relative;
       z-index: 3;
       padding: 32px;
+      padding-bottom: 36px;
     }
 
     .auth-title {
