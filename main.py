@@ -240,16 +240,7 @@ async def api_logs(request: Request, service_name: str = None, lines: int = 100)
         success, out = docker_cmd("logs", "--tail", str(lines), container)
         if success and out:
             for line in out.strip().split('\n'):
-                import re
-                # Parse docker log format: timestamp message
-                match = re.match(r'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s*(.*)', line)
-                if match:
-                    time_str, text = match.groups()
-                    time_display = time_str[11:19]  # HH:MM:SS
-                else:
-                    time_display = ""
-                    text = line
-                all_logs.append({"time": time_display, "text": text, "service": container})
+                all_logs.append({"time": "", "text": line, "service": container})
     
     # Sort by time (newest first)
     all_logs.sort(key=lambda x: x["time"], reverse=True)
