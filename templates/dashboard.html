@@ -457,7 +457,7 @@
                   <button type="button" 
                           aria-label="toggle glass effects" 
                           class="liquid-toggle" 
-                          data-setting="glass-effects">
+                          data-setting="glassEffects">
                     <div class="knockout"><div class="indicator indicator--masked"><div class="mask"></div></div></div>
                     <div class="indicator__liquid">
                       <div class="shadow"></div>
@@ -489,28 +489,26 @@
                     </div>
                   </button>
                 </div>
-              </div>
-            </div>
-                <label class="setting-item">
+                <div class="setting-item">
                   <div class="setting-info">
                     <span class="setting-label">Refresh Interval</span>
                     <span class="setting-description">How often to poll for updates</span>
                   </div>
-                  <select class="setting-select">
+                  <select class="setting-select" data-setting="refreshInterval">
                     <option value="10">10 seconds</option>
-                    <option value="30" selected>30 seconds</option>
+                    <option value="30">30 seconds</option>
                     <option value="60">1 minute</option>
                     <option value="300">5 minutes</option>
                   </select>
-                </label>
+                </div>
               </div>
             </div>
 
             <div class="card-group">
               <h2 class="group-title">Danger Zone</h2>
               <div class="settings-list danger">
-                <button class="btn btn-danger setting-btn" onclick="confirmAction('reset-config', 'Reset all admin panel settings?')">Reset Configuration</button>
-                <button class="btn btn-danger setting-btn" onclick="confirmAction('clear-logs', 'Clear all cached logs?')">Clear Logs</button>
+                <button class="btn btn-danger setting-btn" id="reset-config">Reset Configuration</button>
+                <button class="btn btn-danger setting-btn" id="clear-logs">Clear Logs</button>
               </div>
             </div>
           </div>
@@ -663,7 +661,7 @@
     // Fetch initial stats
     async function fetchStats() {
       try {
-        const [statsRes, sysRes] = await Promise.all([
+        const [statsRes, sysRes] = Promise.all([
           fetch('/api/stats'),
           fetch('/api/system')
         ]);
@@ -680,12 +678,10 @@
           document.getElementById('uptime').textContent = stats.uptime;
         }
 
-        // Update docker count from system endpoint
         if (sys.containers) {
           document.getElementById('docker-count').textContent = `${sys.containers.running}/${sys.containers.total}`;
         }
 
-        // Update system cards if visible
         document.getElementById('sys-cpu-value').textContent = sys.cpu || '--';
         document.getElementById('sys-cpu-bar').style.width = Math.min(parseFloat(sys.cpu || '0'), 100) + '%';
 
@@ -706,8 +702,110 @@
       }
     }
 
+    // Settings tab functionality
+    async function loadSettings() {
+      try {
+        const res = await fetch('/api/settings');
+        const settings = await res.json();
+
+        // Apply booleans to toggles
+        document.querySelectorAll('.liquid-toggle[data-setting]').forEach(btn => {
+          const key = btn.getAttribute('data-setting');
+          const isBool = ['animations', 'glassEffects', 'auto-refresh'].includes(key);
+          if (!isBool) return;
+          const val = settings[key];
+          if (val === true || val === 'true' || val === 1) {
+            btn.setAttribute('aria-pressed', 'true');
+            btn.classList.add('active');
+          } else {
+            btn.setAttribute('aria-pressed', 'false');
+            btn.classList.remove('active');
+          }
+        });
+
+        // Apply select values
+        const refreshSelect = document.querySelector('.setting-select[data-setting="refreshInterval"]');
+        if (refreshSelect && settings.refreshInterval) {
+          refreshSelect.value = String(settings.refreshInterval);
+        }
+
+        // Apply defaults
+        const defaultSection = settings.defaultSection || 'dashboard';
+        showSection(defaultSection);
+
+        // Restart polling with correct intervals
+        if (logInterval) { clearInterval(logInterval); logInterval = null; }
+        if (statsInterval) { clearInterval(statsInterval); statsInterval = null; }
+        const refreshMs = (parseInt(String(settings.refreshInterval || '30'), 10) || 30) * 1000;
+        statsInterval = setInterval(fetchStats, refreshMs);
+
+        if (logTail?.checked && logService?.value) {
+          logInterval = setInterval(loadLogs, 10000);
+        }
+      } catch (err) {
+        console.error('Failed to load settings:', err);
+      }
+    }
+
+    async function persistSetting(key, value) {
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ [key]: value })
+        });
+        const data = await res.json();
+        return data.ok;
+      } catch (err) {
+        console.error('Failed to save setting:', err);
+        return false;
+      }
+    }
+
+    document.querySelectorAll('.liquid-toggle[data-setting]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const key = btn.getAttribute('data-setting');
+        const active = btn.classList.contains('active');
+        const next = !active;
+        btn.setAttribute('aria-pressed', String(next));
+        if (next) btn.classList.add('active');
+        else btn.classList.remove('active');
+        await persistSetting(key, next);
+
+        // Apply live effect where possible
+        if (key === 'glassEffects') {
+          document.documentElement.dataset.glassEffects = next ? '1' : '0';
+        }
+      });
+    });
+
+    document.querySelector('.setting-select[data-setting="refreshInterval"]')?.addEventListener('change', async (e) => {
+      const val = parseInt(e.target.value, 10);
+      await persistSetting('refreshInterval', val);
+      if (statsInterval) clearInterval(statsInterval);
+      statsInterval = setInterval(fetchStats, val * 1000);
+    });
+
+    document.getElementById('reset-config')?.addEventListener('click', async () => {
+      if (!confirm('Reset all admin panel settings?')) return;
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+      await loadSettings();
+    });
+
+    document.getElementById('clear-logs')?.addEventListener('click', async () => {
+      if (!confirm('Clear all cached logs?')) return;
+      await fetch('/api/logs', { method: 'DELETE' });
+      alert('Log cache cleared');
+    });
+
     fetchStats();
     setInterval(fetchStats, 10000);
+
+    loadSettings();
   </script>
 </body>
 </html>

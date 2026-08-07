@@ -6,16 +6,25 @@ import time
 from pathlib import Path
 from fastapi import FastAPI, Request, Form, HTTPException, Depends, Response
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 BASE_DIR = Path(__file__).resolve().parent
 SERVICES_DIR = BASE_DIR / "services"
 TOKEN_FILE = BASE_DIR / ".token"
+SETTINGS_FILE = BASE_DIR / "settings.json"
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "change-me-in-production")
 SESSION_COOKIE = "admin_session"
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 
@@ -68,16 +77,17 @@ def read_pid_file(path: str) -> int | None:
     return None
 
 
-def discover_pid_by_cmd(cmd_substring: str) -> int | None:
+def discover_pids_by_cmd(cmd_substring: str) -> list[int]:
     try:
         out = subprocess.run(["ps", "-eo", "pid,cmd"], capture_output=True, text=True, timeout=10).stdout.strip()
+        pids = []
         for line in out.split("\n")[1:]:
             parts = line.strip().split(None, 1)
             if len(parts) == 2 and cmd_substring in parts[1]:
-                return int(parts[0])
+                pids.append(int(parts[0]))
+        return pids
     except Exception:
-        pass
-    return None
+        return []
 
 
 def process_running(pid: int) -> bool:
@@ -99,10 +109,18 @@ def start_process(service: dict) -> bool:
     pid_file = service.get("pid_file")
     if not cmd:
         return False
-    # Check if already running using stored PID or discovered PID
-    existing_pid = read_pid_file(pid_file) if pid_file else None
-    if existing_pid is not None and process_running(existing_pid):
+    # Check if ANY instance is already running
+    cmd_base = cmd.split()[0] if cmd else ""
+    existing = discover_pids_by_cmd(cmd_base)
+    if existing:
+        # Update PID file with first PID
+        if pid_file:
+            try:
+                Path(pid_file).write_text(str(existing[0]))
+            except Exception:
+                pass
         return True
+    # No existing instance, start new one
     if pid_file:
         Path(pid_file).unlink(missing_ok=True)
     try:
@@ -122,40 +140,40 @@ def start_process(service: dict) -> bool:
 
 
 def stop_process(service: dict) -> bool:
-    pid = None
-    pid_file = service.get("pid_file")
-    if pid_file:
-        pid = read_pid_file(pid_file)
-    if pid is None:
-        pid = discover_pid_by_cmd(service.get("command", "").split()[0] if service.get("command") else "")
-    if pid is None:
+    cmd_base = service.get("command", "").split()[0] if service.get("command") else ""
+    pids = discover_pids_by_cmd(cmd_base)
+    if not pids:
         return True
-    try:
-        os.kill(pid, 15)
-        for _ in range(10):
-            if not process_running(pid):
-                return True
-            time.sleep(0.5)
-        os.kill(pid, 9)
-        return True
-    except Exception:
-        return False
+    ok = True
+    for pid in pids:
+        try:
+            os.kill(pid, 15)
+            for _ in range(10):
+                if not process_running(pid):
+                    break
+                time.sleep(0.5)
+            else:
+                os.kill(pid, 9)
+        except ProcessLookupError:
+            pass
+        except Exception:
+            ok = False
+    return ok
 
 
 def service_running(service: dict) -> bool:
     kind = service.get("kind", "docker")
     if kind == "process":
-        pid_file = service.get("pid_file")
-        pid = read_pid_file(pid_file) if pid_file else None
-        if pid is None and service.get("command"):
-            pid = discover_pid_by_cmd(service.get("command", "").split()[0])
-        if pid is not None and process_running(pid):
+        cmd_base = service.get("command", "").split()[0]
+        pids = discover_pids_by_cmd(cmd_base)
+        if pids:
+            pid_file = service.get("pid_file")
             if pid_file:
                 try:
-                    Path(pid_file).write_text(str(pid))
+                    Path(pid_file).write_text(str(pids[0]))
                 except Exception:
                     pass
-            return True
+            return any(process_running(pid) for pid in pids)
         return False
     return container_running(service.get("container", ""))
 
@@ -222,6 +240,34 @@ async def login(request: Request):
     if token and TOKEN_FILE.exists() and TOKEN_FILE.read_text().strip() == token:
         return RedirectResponse(url="/dashboard", status_code=303)
     return templates.TemplateResponse("login.html", {"request": request, "error": None})
+
+
+@app.get("/api/public/services")
+async def public_services(request: Request):
+    # Public endpoint for portal to discover services
+    services = load_services()
+    result = []
+    for name, svc in services.items():
+        subdomain = svc.get("domain", name.replace("-", ""))
+        if name == "hermes-dashboard":
+            result.append({
+                "name": name,
+                "url": f"https://{subdomain}.fhvps.co.uk",
+                "logo": f"/logos/hermes_logo.png",
+                "running": service_running(svc),
+                "center": True,
+            })
+            continue
+        if name == "hermes-gateway":
+            continue
+        result.append({
+            "name": name,
+            "url": f"https://{subdomain}.fhvps.co.uk",
+            "logo": f"/logos/{name}.png",
+            "running": service_running(svc),
+            "center": False,
+        })
+    return JSONResponse(result)
 
 
 @app.post("/login")
@@ -312,6 +358,44 @@ async def api_stats(request: Request):
     except Exception:
         uptime_out = "Unknown"
     return JSONResponse({"running": running, "total": len(services), "uptime": uptime_out})
+
+
+DEFAULT_SETTINGS = {
+    "refreshInterval": 30,
+    "pollInterval": 10,
+    "animations": True,
+    "glassEffects": True,
+    "defaultSection": "dashboard",
+}
+
+
+def load_settings() -> dict:
+    try:
+        data = json.loads(SETTINGS_FILE.read_text())
+        return {**DEFAULT_SETTINGS, **data}
+    except Exception:
+        return DEFAULT_SETTINGS
+
+
+def save_settings(data: dict) -> None:
+    SETTINGS_FILE.write_text(json.dumps(data, indent=2))
+
+
+@app.get("/api/settings")
+async def api_get_settings(request: Request):
+    require_auth(request)
+    return JSONResponse(load_settings())
+
+
+@app.post("/api/settings")
+async def api_save_settings(request: Request):
+    require_auth(request)
+    try:
+        data = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON")
+    save_settings(data)
+    return JSONResponse({"ok": True, "settings": load_settings()})
 
 
 @app.get("/api/system")
